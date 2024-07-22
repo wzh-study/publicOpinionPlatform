@@ -1,7 +1,7 @@
 {
-  "name": "vue-admin-template",
+  "name": "publicopinionplatform",
   "version": "0.0.0",
-  "description": "vue publicOpinionPlatform",
+  "description": "publicOpinionPlatform",
   "author": "wzh twj zh",
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -16,6 +16,7 @@
   "dependencies": {
     "axios": "0.18.1",
     "core-js": "3.6.5",
+    "echarts": "^5.5.1",
     "element-ui": "2.13.2",
     "js-cookie": "2.2.0",
     "normalize.css": "7.0.0",
