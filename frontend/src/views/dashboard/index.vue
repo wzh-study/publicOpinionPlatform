@@ -36,15 +36,36 @@
       </el-row>
   
       <el-row :gutter="20" class="chart-row">
-        <!-- ECharts 图表等其他内容 -->
-        <!-- 确保为每个图表和数据视图提供足够的空间和适当的样式 -->
-      </el-row>
+      <el-col :span="12">
+        <el-card :body-style="{ padding: '20px' }">
+          <div ref="barChart" style="height: 400px;"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card :body-style="{ padding: '20px' }">
+          <div ref="horizontalBarChart" style="height: 400px;"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card :body-style="{ padding: '20px' }">
+          <div ref="lineChart" style="height: 400px;"></div>
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card :body-style="{ padding: '20px' }">
+          <div ref="pieChart" style="height: 400px;"></div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+
     </div>
   </template>
   
 <script>
 
-import { mapGetters } from 'vuex'
+import * as echarts from 'echarts';
+import { mapGetters } from 'vuex';
 
 export default {
     computed: {
@@ -65,8 +86,123 @@ export default {
             { label: '涉及平台数', value: '3', icon: 'el-icon-platform-eleme', unit: '个' }
         ]
         };
+    },
+
+    // Echarts画图
+    mounted() {
+    this.initBarChart();
+    this.initHorizontalBarChart();
+    this.initLineChart();
+    this.initPieChart();
+    },
+    methods: {
+    initBarChart() {
+      const chart = echarts.init(this.$refs.barChart);
+      chart.setOption({
+        title: {
+          text: '账号关注数'
+        },
+        tooltip: {},
+        xAxis: {
+          data: ['账号A', '账号B', '账号C', '账号D', '账号E']
+        },
+        yAxis: {},
+        series: [{
+          name: '关注数',
+          type: 'bar',
+          data: [1500, 1200, 1800, 1100, 1300]
+        }]
+      });
+    },
+    initHorizontalBarChart() {
+      const chart = echarts.init(this.$refs.horizontalBarChart);
+      chart.setOption({
+        title: {
+          text: '账号粉丝数'
+        },
+        tooltip: {},
+        xAxis: {},
+        yAxis: {
+          data: ['账号A', '账号B', '账号C', '账号D', '账号E']
+        },
+        series: [{
+          name: '粉丝数',
+          type: 'bar',
+          data: [8000, 7000, 9000, 6000, 8000],
+          barWidth: '40%', // 设置柱子的宽度
+          label: {
+            show: true,
+            position: 'inside'
+          }
+        }]
+      });
+    },
+    initLineChart() {
+      const chart = echarts.init(this.$refs.lineChart);
+      chart.setOption({
+        title: {
+          text: '长内容占比'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          data: ['账号A', '账号B', '账号C', '账号D', '账号E']
+        },
+        yAxis: {
+          type: 'value',
+          max: 100,
+          min: 0,
+          axisLabel: {
+            formatter: '{value}%'
+          }
+        },
+        series: [{
+          name: '长内容占比',
+          type: 'line',
+          data: [30, 40, 50, 60, 70]
+        }]
+      });
+    },
+    initPieChart() {
+      const chart = echarts.init(this.$refs.pieChart);
+      chart.setOption({
+        title: {
+          text: '深夜发布贴文占比'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            name: '深夜发布贴文占比',
+            type: 'pie',
+            radius: '50%',
+            data: [
+              { value: 20, name: '账号A' },
+              { value: 30, name: '账号B' },
+              { value: 25, name: '账号C' },
+              { value: 15, name: '账号D' },
+              { value: 10, name: '账号E' }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      });
     }
-    }
+  },
+}
 </script>
 
 <style scoped lang="scss">
