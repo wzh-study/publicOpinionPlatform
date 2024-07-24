@@ -10,31 +10,38 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/user")
+@CrossOrigin(origins = "*", allowedHeaders = "*")  //  处理不同源
+@RequestMapping("/user")
 public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/getBaseUserInfo")
-	public Map<String, Object> getBaseUserInfo(@RequestParam String username) {
+	@GetMapping("/getAllBaseUserInfo")
+	public Map<String, Object> getAllBaseUserInfo() {
+		List<User> users = userService.getAllBaseUserInfo();
+
+		return createResponse(200, "success", users);
+	}
+
+	@PostMapping("/getBaseUserInfo")
+	public Map<String, Object> getBaseUserInfo(@RequestBody User user) {
+		String username = user.getUsername();
+		List<User> users = userService.getBaseUserInfoByUsername(username);
+		return createResponse(200, "success", users);
+	}
+
+	private Map<String, Object> createResponse(int code, String message, List<User> data) {
 		Map<String, Object> response = new HashMap<>();
-		List<User> users = userService.getUsersByUsername(username);
-
-		if (users != null) {
-			response.put("code", 200);
-			response.put("message", "success");
-			response.put("data", users);
-			// Assuming we have pagination details, otherwise this part needs to be implemented
-			response.put("pageNum", 1);
-			response.put("pageSize", users.size());
-			response.put("totalPage", 1);
-			response.put("totalSize", users.size());
-		} else {
-			response.put("code", 504);
-			response.put("message", "notLogin");
-			response.put("data", null);
-		}
-
+		response.put("code", code);
+		response.put("message", message);
+		response.put("data", data);
+		// Assuming page info is hardcoded for simplicity; in real cases, this would be dynamic.
+		response.put("pageNum", 1);
+		response.put("pageSize", 10);
+		response.put("totalPage", data.size() / 10 + 1); // For example
+		response.put("totalSize", data.size());
 		return response;
 	}
 }
+
+

@@ -1,9 +1,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.publicopinion.entity.User">
-    <select id="getUsersByUsername" resultType="com.example.publicopinion.entity.User">
-        SELECT * FROM users WHERE username LIKE CONCAT('%', #{username}, '%')
+<mapper namespace="com.example.publicopinion.mapper.UserMapper">
+    <select id="getBaseUserInfoByUsername" resultType="com.example.publicopinion.entity.User">
+        SELECT * FROM user_social_account WHERE username LIKE CONCAT('%', #{username}, '%')
     </select>
 </mapper>
 
