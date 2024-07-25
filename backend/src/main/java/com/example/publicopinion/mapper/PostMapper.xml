@@ -1,0 +1,58 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.publicopinion.entity.Post">
+    <select id="getAllPostInfo" parameterType="String" resultType="com.example.publicopinion.entity.Post">
+        SELECT
+            date,
+            headline,
+            url,
+            opening_text AS openingText,
+            hit_sentence AS hitSentence,
+            platform,
+            influencer,
+            country,
+            language,
+            sentiment,
+            key_phrases AS keyPhrases,
+            input_name AS inputName,
+            keywords,
+            tweet_id AS tweetId,
+            twitter_id AS twitterId,
+            twitter_followers AS twitterFollowers,
+            twitter_following AS twitterFollowing,
+            post_id AS postId,
+            post_username AS postUsername,
+            posted_id AS postedId,
+            posted_username AS postedUsername
+        FROM post
+    </select>
+
+    <select id="getPostInfoByUsername" parameterType="String" resultType="com.example.publicopinion.entity.Post">
+        SELECT
+            date,
+            headline,
+            url,
+            opening_text AS openingText,
+            hit_sentence AS hitSentence,
+            platform,
+            influencer,
+            country,
+            language,
+            sentiment,
+            key_phrases AS keyPhrases,
+            input_name AS inputName,
+            keywords,
+            tweet_id AS tweetId,
+            twitter_id AS twitterId,
+            twitter_followers AS twitterFollowers,
+            twitter_following AS twitterFollowing,
+            post_username AS postUsername,
+            posted_username AS postedUsername,
+            post_id AS postId,
+            posted_id AS postedId
+        FROM post
+        WHERE post_username = #{username}
+    </select>
+
+</mapper>    

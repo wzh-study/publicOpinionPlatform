@@ -1,7 +1,7 @@
 <template>
     <div class="dashboard">
         <!-- 用户信息大卡片 -->
-      <!-- <el-row :gutter="20">
+      <el-row :gutter="20">
         
         <el-col :span="24">
           <el-card :body-style="{ padding: '20px' }">
@@ -16,7 +16,7 @@
             </div>
           </el-card>
         </el-col>
-      </el-row> -->
+      </el-row>
   
       <!-- 统计卡片 -->
       <el-row :gutter="20">

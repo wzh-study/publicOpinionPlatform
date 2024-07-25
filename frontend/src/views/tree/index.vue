@@ -18,24 +18,47 @@
         fit
         highlight-current-row
       >
-        <el-table-column align="center" label="用户名">
+      <el-table-column label="平台" width="80">
           <template slot-scope="scope">
-            <span v-html=" scope.row.username "></span>
+            {{ scope.row.platform }}
           </template>
         </el-table-column>
-        <el-table-column label="用户ID" width="110" align="center">
+        <el-table-column align="center" label="发帖人用户ID" width="140">
           <template slot-scope="scope">
-            <span>{{ scope.row.user_id }}</span>
+            <span>{{ scope.row.postId }}</span>
+            
           </template>
         </el-table-column>
-        <el-table-column label="post_id" width="110" align="center">
+        <el-table-column label="发帖人用户名" width="120" align="center">
           <template slot-scope="scope">
-            {{ scope.row.post_id }}
+            <span v-html=" scope.row.postUsername "></span>
           </template>
         </el-table-column>
-        <el-table-column label="文本内容">
+        <el-table-column label="贴文类型" width="100" align="center">
+      <template slot-scope="scope">
+        <el-tag v-if="scope.row.postedId" class="forward-tag" type="primary">
+          <el-icon class="el-icon-share"></el-icon>  转发
+        </el-tag>
+        <el-tag v-else class="original-tag" type="success">
+          <el-icon class="el-icon-document"></el-icon>  原发
+        </el-tag>
+      </template>
+    </el-table-column>
+        <el-table-column label="文本内容" >
           <template slot-scope="scope">
-            {{ scope.row.Hit_sentence }}
+            {{ scope.row.hitSentence }}
+          </template>
+        </el-table-column>
+        <el-table-column label="语言" width="80">
+          <template slot-scope="scope">
+            {{ scope.row.language }}
+          </template>
+        </el-table-column>
+        
+        <el-table-column align="center" prop="date" label="发布时间" width="180">
+          <template slot-scope="scope">
+            <i class="el-icon-time" />
+            <span>{{ scope.row.date }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -55,17 +78,25 @@
         currentSearchType: '',
         defaultData: [ // 假数据
           {
-            username: 'John Doe',
-            user_id: '12345',
-            post_id: '1',
-            Hit_sentence: '文本内容'
+            platform: 'Twitter',
+            postUsername: 'John Doe',
+            postId: '12345',
+            postedUsername: 'Join',
+            postedId: '12345',
+            hitSentence: '文本内容',
+            language: 'English',
+            date: '2022-10-12 10:10:10'
           },
           {
-            username: 'Jane Smith',
-            user_id: '23456',
-            post_id: '2',
-            Hit_sentence: '文本内容'
-          }
+            platform: 'Twitter',
+            postUsername: 'John Doe',
+            postId: '12345',
+            postedUsername: 'Join',
+            postedId: '12345',
+            hitSentence: '文本内容',
+            language: 'English',
+            date: '2022-10-12 10:10:10'
+          },
         ],
         cachedData: null,
         highlightedUsername: ''
@@ -78,7 +109,7 @@
       filteredItems() {
         return this.list.map(item => ({
           ...item,
-          username: this.highlightText(item.username, this.highlightedUsername)
+          postUsername: this.highlightText(item.postUsername, this.highlightedUsername)  //  username的取值需要在这里获取  对应传回的数据库中的值
         }))
       }
     },
@@ -92,7 +123,7 @@
   
         this.listLoading = true
         try {
-          const response = await axios.get('/user/getAllPostInfo', {
+          const response = await axios.get('http://localhost:8080/post/getAllPostInfo', {
             headers: {
               'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
             }
@@ -131,7 +162,7 @@
   
           try {
             // 使用实际的 POST 请求向后端发送 JSON 数据
-            const response = await axios.post('/post/getPostInfo', {
+            const response = await axios.post('http://localhost:8080/post/getPostInfoByUsername', {
               username: this.searchQueryUsername
             }, {
               headers: {
@@ -163,9 +194,11 @@
       },
       highlightText(text, query) {
         if (!query) return text
+        console.log(text)
         const regex = new RegExp(`(${query})`, 'gi')
-        return text.replace(regex, '<b>$1</b>')
-      }
+        return text.replace(regex, '<span style="background-color: #D3E3FD; font-weight: bold; color: black;">$1</span>')
+        //return text.replace(regex,'<b>$1</b>');
+    }
     }
   }
   </script>
@@ -186,5 +219,18 @@
   .search-button {
     margin-left: 10px;
   }
+
+  /* 标签字体加粗 */
+  .el-tag {  
+  font-weight: bold;
+}
   </style>
+  
+
+
+
+
+
+
+
   
