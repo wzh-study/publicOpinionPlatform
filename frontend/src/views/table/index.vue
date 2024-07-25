@@ -76,8 +76,8 @@
           {
             username: 'Jane Smith',
             userId: '67890',
-            following_count: 20,
-            followed_count: 30,
+            followingCount: 20,
+            followedCount: 30,
             postCount: 8,
             location: 'Los Angeles'
           }
