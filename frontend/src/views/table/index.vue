@@ -3,12 +3,12 @@
       <div class="search-container">
         <el-input
           class="search-username"
-          placeholder="Search by Username"
+          placeholder="搜索用户名（模糊）"
           v-model="searchQueryUsername"
           clearable
           @clear="clearSearch"
         />
-        <el-button type="primary" @click="handleSearch('username')" class="search-button">Search</el-button>
+        <el-button type="primary" @click="handleSearch('username')" class="search-button">搜索</el-button>
       </div>
     <!-- 数据源为filteredItems -->
       <el-table
