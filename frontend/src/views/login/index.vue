@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">用户建模-舆情分析系统</h3>
+        <h3 class="title">JMRH网络RZDK综合态势感知平台</h3>
       </div>
 
       <el-form-item prop="username">

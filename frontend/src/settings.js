@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '用户建模-舆情分析',
+  title: 'JMRH网络RZDK综合态势感知平台',
 
   /**
    * @type {boolean} true | false

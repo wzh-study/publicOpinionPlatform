@@ -1,399 +1,210 @@
 <template>
     <div class="dashboard">
-      <!-- 用户信息大卡片 -->
-      <!-- <el-row :gutter="20">
-        <el-col :span="24">
-          <el-card :body-style="{ padding: '20px' }">
-            <div class="user-card">
-              <div class="user-avatar">
-                <img :src="avatar + '?imageView2/1/w/80/h/80'" alt="User Avatar" />
-              </div>
-              <div class="user-info">
-                <p class="user-name">admin</p>
-                <p class="user-email">admin@example.com</p>
-              </div>
+        <div class="searchbar">
+            <div class="icon-group">
+                <div class="icon-item" @click="select('facebook')">
+                    <el-button
+                        :type="selected === 'facebook' ? 'primary' : 'default'"
+                        icon="el-icon-user-solid"
+                        circle
+                        :style="{ fontSize: '25px' }"
+                    ></el-button>
+                    <div>Facebook</div>
+                </div>
+                <div class="icon-item" @click="select('twitter')">
+                    <el-button
+                        :type="selected === 'twitter' ? 'primary' : 'default'"
+                        icon="el-icon-platform-eleme"
+                        circle
+                        :style="{ fontSize: '25px' }"
+                    ></el-button>
+                    <div>Twitter</div>
+                </div>
+                <div class="icon-item" @click="select('custom')">
+                    <el-button
+                        :type="selected === 'custom' ? 'primary' : 'default'"
+                        icon="el-icon-platform-eleme"
+                        circle
+                        :style="{ fontSize: '25px' }"
+                    ></el-button>
+                    <div>Custom</div>
+                </div>
             </div>
-          </el-card>
-        </el-col>
-      </el-row> -->
-  
-      <!-- 统计卡片 -->
-      <el-row :gutter="20">
-        <el-col :span="6" v-for="data in infoData" :key="data.label">
-          <el-card :body-style="{ padding: '20px' }">
-            <div class="stat-card">
-              <div class="stat-icon">
-                <i :class="data.icon"></i>
-              </div>
-              <div class="stat-info">
-                <p class="stat-value">{{ data.value }}</p>
-                <p class="stat-label">{{ data.label }}</p>
-              </div>
+            <div class="date-selectors" >
+                <el-date-picker v-model="startDate" type="date" placeholder="开始日期"></el-date-picker>
+                <el-date-picker v-model="endDate" type="date" placeholder="结束日期"></el-date-picker>
             </div>
-          </el-card>
-        </el-col>
-      </el-row>
-  
-      <el-row :gutter="20" class="chart-row">
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="followingChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="followedChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="longTextChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="lateNightContentChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="followingRatioChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="forwardingChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="forwardedChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-        <el-col :span="12">
-          <el-card :body-style="{ padding: '20px' }">
-            <div ref="forwardingRatioChart" style="height: 400px;"></div>
-          </el-card>
-        </el-col>
-      </el-row>
+        </div>
+
+        <hr/>
+
+        <div class="userinfo">
+            <div class="title-with-button">
+                <h3 style="color: #4552ba; font-weight: bold; ">一、用户的基本信息</h3>
+            </div>
+        </div>
+
+        <hr/>
+
+
+        <div class="usersemantic">
+            <div class="title-with-button">
+                <h3 style="color: #4552ba; font-weight: bold; ">二、用户语义</h3>
+            </div>
+            <div id="usersemantic-chart" style="width: 100%; height: 400px;"></div>
+        </div>
+
+        <hr/>
+
+
+
+        <div class="userpublicopinion">
+            <div class="title-with-button">
+                <h3 style="color: #4552ba; font-weight: bold; ">三、用户参与舆情</h3>
+            </div>
+        </div>
+
+        <hr/>
+
+
+
+
     </div>
-  </template>
-  
-  <script>
-  import * as echarts from 'echarts';
-  import { mapGetters } from 'vuex';
-  import axios from 'axios';
-  
-  export default {
-    computed: {
-      ...mapGetters(['avatar'])
-    },
+    
+    
+    
+
+</template>
+
+<script>
+import * as echarts from 'echarts';
+export default {
+    name: 'Dashboard',
     data() {
-      return {
-        userInfo: {
-          name: 'admin',
-          email: 'zhangsan@example.com',
-        },
-        infoData: [],
-        followingData: [],
-        followedData: [],
-        longTextData: [],
-        lateNightContentData: [],
-        followingRatioData: [],
-        forwardingData: [],
-        forwardedData: [],
-        forwardingRatioData: [],
-      };
-    },
-    async mounted() {
-      await this.fetchData(); // 确保数据获取完成后再初始化图表
-      this.initCharts();
+        return {
+            selected: null,
+            startDate: '',
+            endDate: '',
+        };
     },
     methods: {
-      async fetchData() {
-        try {
-          const response = await axios.get('http://localhost:8080/user/getExtraUserInfo');
-          const data = response.data;
-  
-          // 基本信息
-          this.infoData = [
-            { label: '用户总数', value: data.baseInfo.usernum, icon: 'el-icon-user-solid', unit: '人' },
-            { label: '贴文总数', value: data.baseInfo.postnum, icon: 'el-icon-s-comment', unit: '篇' },
-            { label: '涉及国家', value: data.baseInfo.Country, icon: 'el-icon-s-promotion', unit: '个' },
-            { label: '涉及平台数', value: (data.baseInfo.platform && data.baseInfo.platform.length), icon: 'el-icon-platform-eleme', unit: '个' }
-          ];
-  
-          // 关注数数据
-          this.followingData = data.followingInfo.ArrayListX.map((count, index) => ({
-            value: data.followingInfo.ArrayListY[index],
-            name: `关注数 ${count}`
-          }));
-  
-          // 粉丝数数据
-          this.followedData = data.followedInfo.ArrayListX.map((count, index) => ({
-            value: data.followedInfo.ArrayListY[index],
-            name: `粉丝数 ${count}`
-          }));
-  
-          // 长内容占比数据
-          this.longTextData = data.longTextInfo.ArrayListX.map((percentage, index) => ({
-            value: data.longTextInfo.ArrayListY[index],
-            name: `长内容占比 ${percentage}`
-          }));
-  
-          // 深夜发布贴文占比数据
-          this.lateNightContentData = data.lateNightContentRatioInfo.ArrayListX.map((ratio, index) => ({
-            value: data.lateNightContentRatioInfo.ArrayListY[index],
-            name: `比例 ${ratio}`
-          }));
-  
-          // 关注比例数据
-          this.followingRatioData = data.followingRatioInfo.ArrayListX.map((ratio, index) => ({
-            value: data.followingRatioInfo.ArrayListY[index],
-            name: `比例 ${ratio}`
-          }));
-  
-          // 转发数数据
-          this.forwardingData = data.forwardingInfo.ArrayListX.map((count, index) => ({
-            value: data.forwardingInfo.ArrayListY[index],
-            name: `转发数 ${count}`
-          }));
-  
-          // 已转发数数据
-          this.forwardedData = data.forwardedInfo.ArrayListX.map((count, index) => ({
-            value: data.forwardedInfo.ArrayListY[index],
-            name: `已转发数 ${count}`
-          }));
-  
-          // 转发比例数据
-          this.forwardingRatioData = data.forwardingRatioInfo.ArrayListX.map((ratio, index) => ({
-            value: data.forwardingRatioInfo.ArrayListY[index],
-            name: `转发比例 ${ratio}`
-          }));
-  
-        } catch (error) {
-          console.error('用户数据请求失败:', error);
-  
-          // 使用默认数据
-          this.infoData = [
-            { label: '用户总数', value: 9000, icon: 'el-icon-user-solid', unit: '人' },
-            { label: '贴文总数', value: 211231, icon: 'el-icon-s-comment', unit: '篇' },
-            { label: '涉及国家', value: 12, icon: 'el-icon-s-promotion', unit: '个' },
-            { label: '涉及平台数', value: 3, icon: 'el-icon-platform-eleme', unit: '个' }
-          ];
-  
-          this.followingData = [
-            { value: 1500, name: '账号A' },
-            { value: 1200, name: '账号B' },
-            { value: 1800, name: '账号C' },
-            { value: 1100, name: '账号D' },
-            { value: 1300, name: '账号E' }
-          ];
-  
-          this.followedData = [
-            { value: 8000, name: '账号A' },
-            { value: 7000, name: '账号B' },
-            { value: 9000, name: '账号C' },
-            { value: 6000, name: '账号D' },
-            { value: 8000, name: '账号E' }
-          ];
-  
-          this.longTextData = [
-            { value: 30, name: '账号A' },
-            { value: 40, name: '账号B' },
-            { value: 50, name: '账号C' },
-            { value: 60, name: '账号D' },
-            { value: 70, name: '账号E' }
-          ];
-  
-          this.lateNightContentData = [
-            { value: 20, name: '账号A' },
-            { value: 30, name: '账号B' },
-            { value: 25, name: '账号C' },
-            { value: 15, name: '账号D' },
-            { value: 10, name: '账号E' }
-          ];
-  
-          this.followingRatioData = [
-            { value: 20, name: '账号A' },
-            { value: 30, name: '账号B' },
-            { value: 25, name: '账号C' },
-            { value: 15, name: '账号D' },
-            { value: 10, name: '账号E' }
-          ];
-  
-          this.forwardingData = [
-            { value: 100, name: '账号A' },
-            { value: 150, name: '账号B' },
-            { value: 200, name: '账号C' },
-            { value: 250, name: '账号D' },
-            { value: 300, name: '账号E' }
-          ];
-  
-          this.forwardedData = [
-            { value: 50, name: '账号A' },
-            { value: 75, name: '账号B' },
-            { value: 100, name: '账号C' },
-            { value: 125, name: '账号D' },
-            { value: 150, name: '账号E' }
-          ];
-  
-          this.forwardingRatioData = [
-            { value: 20, name: '账号A' },
-            { value: 30, name: '账号B' },
-            { value: 40, name: '账号C' },
-            { value: 50, name: '账号D' },
-            { value: 60, name: '账号E' }
-          ];
-        }
-      },
-  
-      initCharts() {
-        this.initBarChart(this.$refs.followingChart, '账号关注数', this.followingData.map(d => d.name), this.followingData.map(d => d.value));
-        this.initBarChart(this.$refs.followedChart, '账号粉丝数', this.followedData.map(d => d.name), this.followedData.map(d => d.value), true);
-        this.initLineChart(this.$refs.longTextChart, '长内容占比', this.longTextData.map(d => d.name), this.longTextData.map(d => d.value));
-        this.initPieChart(this.$refs.lateNightContentChart, '深夜发布贴文占比', this.lateNightContentData);
-        this.initPieChart(this.$refs.followingRatioChart, '关注比例分布', this.followingRatioData);
-        this.initBarChart(this.$refs.forwardingChart, '转发情况', this.forwardingData.map(d => d.name), this.forwardingData.map(d => d.value));
-        this.initBarChart(this.$refs.forwardedChart, '已转发情况', this.forwardedData.map(d => d.name), this.forwardedData.map(d => d.value));
-        this.initLineChart(this.$refs.forwardingRatioChart, '转发比例', this.forwardingRatioData.map(d => d.name), this.forwardingRatioData.map(d => d.value));
-      },
-  
-      initBarChart(element, title, xAxisData, seriesData, isHorizontal = false) {
-        const chart = echarts.init(element);
-        chart.setOption({
-          title: { text: title, left: 'center' },
-          tooltip: {},
-          xAxis: isHorizontal ? {} : { data: xAxisData },
-          yAxis: isHorizontal ? { data: xAxisData } : {},
-          series: [{
-            name: title,
-            type: 'bar',
-            data: seriesData,
-            barWidth: '40%', // 设置柱子的宽度
-            label: {
-              show: true,
-              position: isHorizontal ? 'inside' : 'top'
+        select(icon) {
+            this.selected = icon;
+        },
+        initUserSemanticChart() {
+            const chartDom = document.getElementById('usersemantic-chart');
+            console.log(chartDom); // Ensure this logs to console
+            const myChart = echarts.init(chartDom);
+            myChart.showLoading();
+
+            // Generate 40 nodes
+            const nodes = Array.from({ length: 40 }, (_, i) => ({
+                name: `Node${i + 1}`,
+                category: i % 3 // Assign categories cyclically
+            }));
+
+            // Generate random links
+            const links = [];
+            for (let i = 0; i < 40; i++) {
+                const targetIndex = Math.floor(Math.random() * 40);
+                if (i !== targetIndex) {
+                    links.push({ source: `Node${i + 1}`, target: `Node${targetIndex + 1}` });
+                }
             }
-          }]
-        });
-      },
-      initLineChart(element, title, xAxisData, seriesData) {
-        const chart = echarts.init(element);
-        chart.setOption({
-          title: { text: title, left: 'center' },
-          tooltip: { trigger: 'axis' },
-          xAxis: { type: 'category', data: xAxisData },
-          yAxis: { type: 'value', axisLabel: { formatter: '{value}%' } },
-          series: [{
-            name: title,
-            type: 'line',
-            data: seriesData
-          }]
-        });
-      },
-      initPieChart(element, title, seriesData) {
-        const chart = echarts.init(element);
-        chart.setOption({
-          title: { text: title, left: 'center' },
-          tooltip: { trigger: 'item' },
-          legend: { orient: 'vertical', left: 'left' },
-          series: [{
-            name: title,
-            type: 'pie',
-            radius: '50%',
-            data: seriesData,
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }]
-        });
-      }
-    }
-  }
-  </script>
-  
-  
-  <style scoped lang="scss">
-  .dashboard {
-    background-color: #f0f2f5; /* 浅灰背景 */
-    padding: 30px;
-  
-    .el-row {
-      margin-bottom: 10px; /* 行底部间距 */
-    }
-  
-    .el-col {
-      margin-bottom: 20px; /* 每个图表底部间距，增大上下间隔 */
-    }
-  
-    .user-card {
-      display: flex;
-      align-items: center;
-  
-      .user-avatar {
-        img {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
+
+            const fakeData = {
+                nodes,
+                categories: [
+                    { name: 'Category1' },
+                    { name: 'Category2' },
+                    { name: 'Category3' }
+                ],
+                links
+            };
+
+            myChart.hideLoading();
+            const option = {
+                legend: {
+                    data: ['Category1', 'Category2', 'Category3']
+                },
+                series: [
+                    {
+                        type: 'graph',
+                        layout: 'force',
+                        animation: false,
+                        label: {
+                            position: 'right',
+                            formatter: '{b}'
+                        },
+                        draggable: true,
+                        data: fakeData.nodes,
+                        categories: fakeData.categories,
+                        force: {
+                            edgeLength: 5,
+                            repulsion: 20,
+                            gravity: 0.2
+                        },
+                        edges: fakeData.links
+                    }
+                ]
+            };
+            myChart.setOption(option);
         }
-      }
-  
-      .user-info {
-        margin-left: 12px;
-  
-        .user-name {
-          font-size: 20px;
-          font-weight: bold;
-          color: #333;
-        }
-  
-        .user-email {
-          font-size: 14px;
-          color: #666;
-        }
-      }
+    },
+    mounted() {
+        this.initUserSemanticChart();
     }
-  
-    .stat-card {
-      display: flex;
-      align-items: center;
-  
-      .stat-icon {
-        font-size: 40px;
-        color: #409EFF; /* Element UI 默认的蓝色主题色 */
-      }
-  
-      .stat-info {
-        margin-left: 12px;
-  
-        .stat-value {
-          font-size: 24px;
-          font-weight: bold;
-          color: #333;
-        }
-  
-        .stat-label {
-          font-size: 16px;
-          color: #666;
-        }
-      }
-    }
-  
-    .chart-row {
-      background-color: #fff; /* 为图表行设置白色背景 */
-      padding: 20px;
-      border-radius: 4px;
-    }
-  
-    /* 添加图表的外层容器间隔 */
-    .chart-row > .el-col {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-  }
-  </style>
+}
+</script>
+
+<style scoped>
+
+
+.dashboard {
+    padding: 10px;
+}
+
+hr {
+    margin-top: 20px;
+    height: 1px; /* Increase the height of the hr */
+    background-color: skyblue; /* 将整个 hr 标签的背景颜色更改为蓝色 */
+}
+
+/*  导航栏样式 */
+
+.searchbar {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    
+}
+
+.searchbar  .el-button {
+    border: none; 
+    padding: 0; 
+}
+
+.icon-group {
+    display: flex;
+    gap: 50px; /* Add some space between icons */
+}
+.icon-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+.icon-item div {
+    margin-top: 5px; /* Add some space between icon and text */
+}
+
+.date-selectors {
+    display: flex;
+    gap: 50px; /* Add some space between date pickers */
+    justify-content: center; /* Center the date pickers */
+}
+
+/*  第一部分样式 */
+</style>
