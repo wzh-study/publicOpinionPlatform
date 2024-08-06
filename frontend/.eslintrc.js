@@ -19,8 +19,11 @@ module.exports = {
       "multiline": {
         "max": 1,
         "allowFirstLine": false
-      }
-    }],
+      },
+      
+    },
+    
+],
     "vue/singleline-html-element-content-newline": "off",
     "vue/multiline-html-element-content-newline":"off",
     "vue/name-property-casing": ["error", "PascalCase"],
@@ -193,6 +196,12 @@ module.exports = {
     'object-curly-spacing': [2, 'always', {
       objectsInObjects: false
     }],
-    'array-bracket-spacing': [2, 'never']
+    'array-bracket-spacing': [2, 'never'],
+    
+    'semi': 'off', // 关闭要求分号的规则
+    'indent': 'off', // 关闭缩进规则
+    'vue/order-in-components': 'off', // 关闭组件顺序规则
+    'no-multiple-empty-lines': 'off', // 关闭多空行规则
+    'no-trailing-spaces': 'off' // 关闭尾随空格规则
   }
 }

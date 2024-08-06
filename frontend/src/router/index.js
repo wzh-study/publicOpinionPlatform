@@ -70,6 +70,19 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/recognitionRiskEstimation',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'recognitionRiskEstimation',
+        component: () => import('@/views/recognitionRiskEstimation/index.vue'),
+        meta: { title: '认知风险评估', icon: 'link' }
+      }
+    ]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
