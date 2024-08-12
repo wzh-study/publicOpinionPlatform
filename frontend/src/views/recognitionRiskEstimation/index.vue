@@ -54,24 +54,53 @@
       </div>
     </div>
 
-    <hr>
+    <hr style="background-color:#b3dbf1; height:1px; border:none;">
 
     <div class="radarChart">
       <div class="title-with-button">
-        <h3 style="color:rgb(2, 157, 255); font-weight: bold; ">议题规模</h3>
+        <el-switch v-model="showRadarChart" @change="toggleChart" />
+        <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">议题规模</h3>
       </div>
       <div id="radar-chart" style="width: 100%; height: 400px;" />
     </div>
-    <hr>
+
+    <hr style="background-color:#b3dbf1; height:1px; border:none;">
+
     <div class="barChart">
       <div class="title-with-button">
-        <h3 style="color:rgb(2, 157, 255); font-weight: bold; ">议题趋势与参考风险等级</h3>
+        <el-switch v-model="showBarChart" @change="toggleChart" />
+        <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">议题趋势与参考风险等级</h3>
+      </div>
+      <div class="content-selectors">
+        <img src="http://www.aimbest-inspection.com/xwadmin/kindeditor/asp/attached/image/20140306/20140306152189278927.jpg" alt="Image" class="search-img">
+        <el-select v-model="selectedOption" placeholder="选择选项" style="width: 200px;">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </div>
       <div id="bar-chart" style="width: 100%; height: 400px;" />
     </div>
-    <hr>
+
+    <hr style="background-color:#b3dbf1; height:1px; border:none;">
+
     <div class="title-with-button">
-      <h3 style="color:rgb(2, 157, 255); font-weight: bold; ">议题趋势与参考风险等级</h3>
+      <el-switch v-model="showPositionAndSentiment" @change="toggleChart" />
+      <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left: 10px">议题立场与情绪</h3>
+    </div>
+    <div class="content-selectors">
+      <img src="http://www.aimbest-inspection.com/xwadmin/kindeditor/asp/attached/image/20140306/20140306152189278927.jpg" alt="Image" class="search-img">
+      <el-select v-model="selectedOption" placeholder="选择选项" style="width: 200px;">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
     </div>
     <div class="positionAndSentiment">
       <div class="positionChart">
@@ -93,7 +122,19 @@ export default {
     return {
       selected: null,
       startDate: '',
-      endDate: ''
+      endDate: '',
+      selectedOption: '',
+      showRadarChart: true,
+      showBarChart:true,
+      showPositionAndSentiment: true,
+      options: [
+        { value: 'option1', label: '综合' },
+        { value: 'option2', label: '中国/中共/中共中央' },
+        { value: 'option3', label: '台湾省(中华民国)' },
+        { value: 'option4', label:'民进党/国民党'},
+        { value: 'option5', label:'赖清德'},
+        { value: 'option6', label:'战争/和平'}
+      ]
     }
   },
   mounted() {
@@ -105,6 +146,16 @@ export default {
   methods: {
     select(icon) {
       this.selected = icon
+    },
+    toggleChart() {
+      this.$nextTick(() => {
+        if (this.showRadarChart) this.initRadarChart()
+        if (this.showBarChart) this.initBarChart()
+        if (this.showPositionAndSentiment) {
+          this.initPositionChart()
+          this.initSentimentChart()
+        }
+      })
     },
     initBarChart() {
       const colors = ['#5470C6', '#91CC75', '#EE6666']
@@ -276,11 +327,6 @@ export default {
       const positionChart = echarts.init(positionChartDom)
       positionChart.showLoading()
       const positionOption = {
-        title: [
-          {
-            text: 'Tangential Polar Bar Label Position (middle)'
-          }
-        ],
         polar: {
           radius: [30, '80%']
         },
@@ -290,12 +336,12 @@ export default {
         },
         radiusAxis: {
           type: 'category',
-          data: ['a', 'b', 'c', 'd']
+          data: ['声援', '认同', '批判', '蔑视','敌对']
         },
         tooltip: {},
         series: {
           type: 'bar',
-          data: [2, 1.2, 2.4, 3.6],
+          data: [2, 1.2, 2.4, 3.6, 1.6],
           coordinateSystem: 'polar',
           label: {
             show: true,
@@ -333,7 +379,7 @@ export default {
             type: 'bar',
             data: [2, 4, 6, 1, 3, 2, 1],
             coordinateSystem: 'polar',
-            name: 'B',
+            name: '情绪',
             stack: 'a',
             emphasis: {
               focus: 'series'
@@ -343,7 +389,7 @@ export default {
             type: 'bar',
             data: [1, 2, 3, 4, 1, 2, 5],
             coordinateSystem: 'polar',
-            name: 'C',
+            name: '极端情绪',
             stack: 'a',
             emphasis: {
               focus: 'series'
@@ -352,7 +398,7 @@ export default {
         ],
         legend: {
           show: true,
-          data: ['A', 'B', 'C']
+          data: ['A', '情绪', '极端情绪']
         }
       }
       sentimentChart.hideLoading()
@@ -375,6 +421,14 @@ export default {
 
 .icon-item {
   text-align: center;
+}
+
+.search-img{
+  width:32px;
+  height:40px;
+  margin-left:10px;
+  margin-right:10px;
+  vertical-align:middle;
 }
 
 .date-selectors {
@@ -403,6 +457,6 @@ export default {
 .title-with-button {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  margin-left:10px;
 }
 </style>

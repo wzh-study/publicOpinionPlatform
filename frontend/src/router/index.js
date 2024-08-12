@@ -71,6 +71,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/userpage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'userpage',
+        component: () => import('@/views/userpage/index.vue'),
+        meta: { title: '用户页', icon: 'form' }
+      }
+    ]
+  },
+
+  {
     path: '/recognitionRiskEstimation',
     component: Layout,
     children: [
