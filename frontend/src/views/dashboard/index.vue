@@ -1,580 +1,577 @@
 <template>
     <div class="dashboard">
-      <div class="searchbar">
-        <div class="icon-group">
-          <div class="icon-item" @click="select('facebook')">
-            <el-button
-              :type="selected === 'facebook' ? 'primary' : 'default'"
-              icon="el-icon-user-solid"
-              circle
-              :style="{ fontSize: '25px' }"
-            />
-            <div>Facebook</div>
-          </div>
-          <div class="icon-item" @click="select('twitter')">
-            <el-button
-              :type="selected === 'twitter' ? 'primary' : 'default'"
-              icon="el-icon-platform-eleme"
-              circle
-              :style="{ fontSize: '25px' }"
-            />
-            <div>Twitter</div>
-          </div>
-          <div class="icon-item" @click="select('custom')">
-            <el-button
-              :type="selected === 'custom' ? 'primary' : 'default'"
-              icon="el-icon-platform-eleme"
-              circle
-              :style="{ fontSize: '25px' }"
-            />
-            <div>Custom</div>
-          </div>
+        <div class="searchbar">
+            <div class="icon-group">
+                <div class="icon-item" @click="select('facebook')">
+                    <el-button :type="selected === 'facebook' ? 'primary' : 'default'" icon="el-icon-user-solid" circle
+                        :style="{ fontSize: '25px' }" />
+                    <div>Facebook</div>
+                </div>
+                <div class="icon-item" @click="select('twitter')">
+                    <el-button :type="selected === 'twitter' ? 'primary' : 'default'" icon="el-icon-platform-eleme" circle
+                        :style="{ fontSize: '25px' }" />
+                    <div>Twitter</div>
+                </div>
+                <div class="icon-item" @click="select('custom')">
+                    <el-button :type="selected === 'custom' ? 'primary' : 'default'" icon="el-icon-platform-eleme" circle
+                        :style="{ fontSize: '25px' }" />
+                    <div>Custom</div>
+                </div>
+            </div>
+            <div class="date-selectors">
+                <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
+                <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
+            </div>
         </div>
-        <div class="date-selectors">
-          <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
-          <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
+
+        <hr>
+
+        <div class="LesMiserables">
+            <div class="title-with-button">
+                <el-switch v-model="showEventInfo" @change="toggleChart" />
+                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">舆情事件总览</h3>
+            </div>
         </div>
-      </div>
-  
-      <hr>
-  
-      <div class="LesMiserables">
+        <div id="eventChart" style="width: 800px; height: 400px; margin: 0 auto" />
+        <div class="content-conclusion">
+            [A] 舆情事件关系图 (用户高度重合)
+        </div>
+        <hr>
+
         <div class="title-with-button">
-          <el-switch v-model="showEventInfo" @change="toggleChart" />
-          <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">舆情事件总览</h3>
+            <el-switch v-model="showEventRanking" @change="toggleChart" />
+            <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">舆情事件排行榜</h3>
         </div>
-      </div>
-      <div id="eventChart" style="width: 800px; height: 400px; margin: 0 auto" />
-      <div class="content-conclusion">
-        [A] 舆情事件关系图 (用户高度重合)
-      </div>
-      <hr>
-  
-      <div class="title-with-button">
-        <el-switch v-model="showEventRanking" @change="toggleChart" />
-        <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">舆情事件排行榜</h3>
-      </div>
-      <div class="container-wrapper">
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            总内容数量榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+        <div class="container-wrapper">
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    总内容数量榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            今日内容数量榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    今日内容数量榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            近期内容数量飙升榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    近期内容数量飙升榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            敌意言论数量榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    敌意言论数量榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-  
-      <div class="container-wrapper">
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            总参与人数榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+        <div class="container-wrapper">
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    总参与人数榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="darkContainer">
-          <div class="ranking-title">
-            今日参与人数榜
-          </div>
-          <div class="ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              {{ index + 1 }}. {{ event }}
-              <img :src="eventImgSrc[index]" :alt="`Image ${index + 1}`">
+            <div class="darkContainer">
+                <div class="ranking-title">
+                    今日参与人数榜
+                </div>
+                <div class="ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        {{ index + 1 }}. {{ event }}
+                        <img :src="eventImgSrc[index]" :alt="`Image ${index + 1}`">
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            近期参与人数飙升榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    近期参与人数飙升榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            敌意言论比例榜
-          </div>
-          <div class="light-ranking-content">
-            <div v-for="(event, index) in eventRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ event }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    敌意言论比例榜
+                </div>
+                <div class="light-ranking-content">
+                    <div v-for="(event, index) in eventRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ event }}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="content-conclusion">
-        [B] 舆情事件分维度排行榜
-      </div>
-      <hr>
-  
-      <div class="LesMiserables">
+        <div class="content-conclusion">
+            [B] 舆情事件分维度排行榜
+        </div>
+        <hr>
+
+        <div class="LesMiserables">
+            <div class="title-with-button">
+                <el-switch v-model="showUserInfo" @change="toggleChart" />
+                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户总览</h3>
+            </div>
+        </div>
+        <div id="userChart" style="width: 1000px; height: 400px; margin: 0 auto" />
+        <div class="content-conclusion">
+            [C] 关键用户关系图 (参与事件高度重合)
+        </div>
+
+        <hr>
+
         <div class="title-with-button">
-          <el-switch v-model="showUserInfo" @change="toggleChart" />
-          <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户总览</h3>
+            <el-switch v-model="showEventRanking" @change="toggleChart" />
+            <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户排行榜</h3>
         </div>
-      </div>
-      <div id="userChart" style="width: 1000px; height: 400px; margin: 0 auto" />
-      <div class="content-conclusion">
-        [C] 关键用户关系图 (参与事件高度重合)
-      </div>
-  
-      <hr>
-  
-      <div class="title-with-button">
-        <el-switch v-model="showEventRanking" @change="toggleChart" />
-        <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户排行榜</h3>
-      </div>
-      <div class="container-wrapper">
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            大V用户(出度)榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+        <div class="container-wrapper">
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    大V用户(出度)榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            大V用户(高阶互动)榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    大V用户(高阶互动)榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="darkContainer">
-          <div class="ranking-title">
-            大V用户(出度)榜
-          </div>
-          <div class="ranking-content">
-            <div v-for="(user, index) in userRanking" :key="index">
-              {{ index + 1 }}. {{ user }}
-              <img :src="userImgSrc[index]" :alt="`Image ${index + 1}`">
+
+            <div class="darkContainer">
+                <div class="ranking-title">
+                    大V用户(出度)榜
+                </div>
+                <div class="ranking-content">
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        {{ index + 1 }}. {{ user }}
+                        <img :src="userImgSrc[index]" :alt="`Image ${index + 1}`">
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            高产用户(原帖)榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    高产用户(原帖)榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="container-wrapper">
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            台独/统一·议题活跃榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+        <div class="container-wrapper">
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    台独/统一·议题活跃榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            中国/中共·议题活跃榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    中国/中共·议题活跃榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index" class="ranking-item" @click="navigateToEvent(event)">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            民进党·议题活跃榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    民进党·议题活跃榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-  
-        <div class="lightContainer">
-          <div class="light-ranking-title">
-            赖清德·议题活跃榜
-          </div>
-          <div class="light-ranking-content">
-            <!-- 正确使用 v-for 遍历数组中的每个元素 -->
-            <div v-for="(user, index) in userRanking" :key="index">
-              <!-- index + 1 表示序号，user 表示每个用户名称 -->
-              {{ index + 1 }}. {{ user }}
+
+            <div class="lightContainer">
+                <div class="light-ranking-title">
+                    赖清德·议题活跃榜
+                </div>
+                <div class="light-ranking-content">
+                    <!-- 正确使用 v-for 遍历数组中的每个元素 -->
+                    <div v-for="(user, index) in userRanking" :key="index">
+                        <!-- index + 1 表示序号，user 表示每个用户名称 -->
+                        {{ index + 1 }}. {{ user }}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="content-conclusion">
-        [D] 关键用户分维度排行榜
-      </div>
+        <div class="content-conclusion">
+            [D] 关键用户分维度排行榜
+        </div>
     </div>
-  </template>
+</template>
   
-  <script>
-  import * as echarts from 'echarts'
-  import axios from 'axios'
-  import graphData from '@/assets/les-miserables.json'
-  import localUserRanking from '@/assets/userRanking.json'
-  import localEventRanking from '@/assets/eventRanking.json'
-  
-  export default {
+<script>
+import * as echarts from 'echarts'
+import axios from 'axios'
+import graphData from '@/assets/les-miserables.json'
+import localUserRanking from '@/assets/userRanking.json'
+import localEventRanking from '@/assets/eventRanking.json'
+
+export default {
     data() {
-      return {
-        chartInstance: null,
-        userRanking: [],
-        eventRanking: [],
-        userImgSrc: [],
-        eventImgSrc: [],
-        nodes: [],
-        links: [],
-        showEventInfo: true,
-        showEventRanking: true,
-        showUserInfo: true,
-        showUserRanking: true
-      }
+        return {
+            chartInstance: null,
+            userRanking: [],
+            eventRanking: [],
+            userImgSrc: [],
+            eventImgSrc: [],
+            nodes: [],
+            links: [],
+            showEventInfo: true,
+            showEventRanking: true,
+            showUserInfo: true,
+            showUserRanking: true
+        }
     },
     async mounted() {
-      this.initEventChart()
-      this.initUserChart()
-  
-      await this.fetchUserRanking() // 等待 fetchUserRanking 完成
-      await this.fetchEventRanking() // 等待 fetchEventRanking 完成
-  
-      this.fetchUserImgSrc()
-      this.fetchEventImgSrc()
+        this.initEventChart()
+        this.initUserChart()
+
+        await this.fetchUserRanking() // 等待 fetchUserRanking 完成
+        await this.fetchEventRanking() // 等待 fetchEventRanking 完成
+
+        this.fetchUserImgSrc()
+        this.fetchEventImgSrc()
     },
     methods: {
-      initUserChart() {
-        axios.get('http://localhost:8080/user-chart-data')
-          .then(response => {
-            // 使用后端返回的数据
-            this.nodes = response.data.nodes
-            this.links = response.data.links
-          })
-          .catch(error => {
-            console.error('Error fetching user chart data from backend, using local data instead:', error)
-            // 使用本地数据
-            this.nodes = graphData.nodes
-            this.links = graphData.links
-          })
-          .finally(() => {
-            // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('userChart'))
-            const option = {
-              title: {
-                top: 'bottom',
-                left: 'right'
-              },
-              tooltip: {},
-              animationDuration: 1500,
-              animationEasingUpdate: 'quinticInOut',
-              series: [
-                {
-                  name: 'Les Miserables',
-                  type: 'graph',
-                  legendHoverLink: false,
-                  layout: 'none',
-                  data: this.nodes.map(node => ({
-                    ...node,
-                    x: node.x * 5, // 拉开节点间的距离
-                    y: node.y * 5, // 拉开节点间的距离
-                    symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
-                  })),
-                  links: this.links,
-                  categories: graphData.categories,
-                  roam: true,
-                  label: {
-                    position: 'right',
-                    formatter: '{b}'
-                  },
-                  lineStyle: {
-                    color: 'source',
-                    curveness: 0.3,
-                    width: 1 // 保持线的宽度，确保其清晰度
-                  },
-                  emphasis: {
-                    focus: 'adjacency',
-                    lineStyle: {
-                      width: 10 // 鼠标悬停时线的宽度
+        initUserChart() {
+            axios.get('http://localhost:8080/user-chart-data')
+                .then(response => {
+                    // 使用后端返回的数据
+                    this.nodes = response.data.nodes
+                    this.links = response.data.links
+                })
+                .catch(error => {
+                    console.error('Error fetching user chart data from backend, using local data instead:', error)
+                    // 使用本地数据
+                    this.nodes = graphData.nodes
+                    this.links = graphData.links
+                })
+                .finally(() => {
+                    // 初始化图表
+                    this.chartInstance = echarts.init(document.getElementById('userChart'))
+                    const option = {
+                        title: {
+                            top: 'bottom',
+                            left: 'right'
+                        },
+                        tooltip: {},
+                        animationDuration: 1500,
+                        animationEasingUpdate: 'quinticInOut',
+                        series: [
+                            {
+                                name: 'Les Miserables',
+                                type: 'graph',
+                                legendHoverLink: false,
+                                layout: 'none',
+                                data: this.nodes.map(node => ({
+                                    ...node,
+                                    x: node.x * 5, // 拉开节点间的距离
+                                    y: node.y * 5, // 拉开节点间的距离
+                                    symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
+                                })),
+                                links: this.links,
+                                categories: graphData.categories,
+                                roam: true,
+                                label: {
+                                    position: 'right',
+                                    formatter: '{b}'
+                                },
+                                lineStyle: {
+                                    color: 'source',
+                                    curveness: 0.3,
+                                    width: 1 // 保持线的宽度，确保其清晰度
+                                },
+                                emphasis: {
+                                    focus: 'adjacency',
+                                    lineStyle: {
+                                        width: 10 // 鼠标悬停时线的宽度
+                                    }
+                                }
+                            }
+                        ]
                     }
-                  }
-                }
-              ]
-            }
-            this.chartInstance.setOption(option)
-          })
-      },
-      initEventChart() {
-        axios.get('http://localhost:8080/event-chart-data')
-          .then(response => {
-            // 使用后端返回的数据
-            this.nodes = response.data.nodes
-            this.links = response.data.links
-          })
-          .catch(error => {
-            console.error('Error fetching event chart data from backend, using local data instead:', error)
-            // 使用本地数据
-            this.nodes = graphData.nodes
-            this.links = graphData.links
-          })
-          .finally(() => {
-            // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('eventChart'))
-            const option = {
-              title: {
-                top: 'bottom',
-                left: 'right'
-              },
-              tooltip: {},
-              animationDuration: 1500,
-              animationEasingUpdate: 'quinticInOut',
-              series: [
-                {
-                  name: 'Les Miserables',
-                  type: 'graph',
-                  legendHoverLink: false,
-                  layout: 'none',
-                  data: this.nodes.map(node => ({
-                    ...node,
-                    x: node.x * 5, // 拉开节点间的距离
-                    y: node.y * 5, // 拉开节点间的距离
-                    symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
-                  })),
-                  links: this.links,
-                  categories: graphData.categories,
-                  roam: true,
-                  label: {
-                    position: 'right',
-                    formatter: '{b}'
-                  },
-                  lineStyle: {
-                    color: 'source',
-                    curveness: 0.3,
-                    width: 1 // 保持线的宽度，确保其清晰度
-                  },
-                  emphasis: {
-                    focus: 'adjacency',
-                    lineStyle: {
-                      width: 10 // 鼠标悬停时线的宽度
+                    this.chartInstance.setOption(option)
+                })
+        },
+        initEventChart() {
+            axios.get('http://localhost:8080/event-chart-data')
+                .then(response => {
+                    // 使用后端返回的数据
+                    this.nodes = response.data.nodes
+                    this.links = response.data.links
+                })
+                .catch(error => {
+                    console.error('Error fetching event chart data from backend, using local data instead:', error)
+                    // 使用本地数据
+                    this.nodes = graphData.nodes
+                    this.links = graphData.links
+                })
+                .finally(() => {
+                    // 初始化图表
+                    this.chartInstance = echarts.init(document.getElementById('eventChart'))
+                    const option = {
+                        title: {
+                            top: 'bottom',
+                            left: 'right'
+                        },
+                        tooltip: {},
+                        animationDuration: 1500,
+                        animationEasingUpdate: 'quinticInOut',
+                        series: [
+                            {
+                                name: 'Les Miserables',
+                                type: 'graph',
+                                legendHoverLink: false,
+                                layout: 'none',
+                                data: this.nodes.map(node => ({
+                                    ...node,
+                                    x: node.x * 5, // 拉开节点间的距离
+                                    y: node.y * 5, // 拉开节点间的距离
+                                    symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
+                                })),
+                                links: this.links,
+                                categories: graphData.categories,
+                                roam: true,
+                                label: {
+                                    position: 'right',
+                                    formatter: '{b}'
+                                },
+                                lineStyle: {
+                                    color: 'source',
+                                    curveness: 0.3,
+                                    width: 1 // 保持线的宽度，确保其清晰度
+                                },
+                                emphasis: {
+                                    focus: 'adjacency',
+                                    lineStyle: {
+                                        width: 10 // 鼠标悬停时线的宽度
+                                    }
+                                }
+                            }
+                        ]
                     }
-                  }
-                }
-              ]
-            }
-            this.chartInstance.setOption(option)
-          })
-      },
-      fetchEventImgSrc() {
-        axios.get('http://localhost:8080/event-img-src')
-          .then(response => {
-            this.eventImgSrc = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching event image sources from backend:', error)
-            console.log('Event Ranking Length:', this.eventRanking.length)
-            console.log('User Ranking Length:', this.userRanking.length)
-            this.eventImgSrc = Array(this.eventRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
-          })
-      },
-      fetchUserImgSrc() {
-        axios.get('http://localhost:8080/user-img-src')
-          .then(response => {
-            this.userImgSrc = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching user image sources from backend:', error)
-            this.userImgSrc = Array(this.userRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
-          })
-      },
-      fetchUserRanking() {
-        return axios.get('http://localhost:8080')
-          .then(response => {
-            // 直接将响应数据赋值给 userRanking
-            this.userRanking = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching user ranking from backend:', error)
-            // Log the length of localUserRanking and check its content
-            console.log('Local user ranking data:', localUserRanking)
-            console.log('Type of userRanking:', typeof this.userRanking)
-            console.log('User Ranking:', this.userRanking)
-            // Fallback to local data
-            this.userRanking = localUserRanking
-          })
-      },
-      fetchEventRanking() {
-        return axios.get('http://localhost:8080')
-          .then(response => {
-            // 直接将响应数据赋值给 eventRanking
-            this.eventRanking = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching user ranking from backend:', error)
-            // Log the length of localUserRanking and check its content
-            console.log('Local Event ranking data:', localEventRanking)
-            console.log('Type of eventRanking:', typeof this.eventRanking)
-            console.log('Event Ranking:', this.eventRanking)
-            // Fallback to local data
-            this.eventRanking = localEventRanking
-          })
-      },
-      toggleChart() {
-        this.$nextTick(() => {
-          if (this.showEventInfo) this.initEventChart()
-          if (this.showEventRanking) this.initEventChart()
-          if (this.showUserInfo) this.initUserChart()
-          if (this.showUserRanking) this.initUserChart()
-        })
-      }
+                    this.chartInstance.setOption(option)
+                })
+        },
+        fetchEventImgSrc() {
+            axios.get('http://localhost:8080/event-img-src')
+                .then(response => {
+                    this.eventImgSrc = response.data
+                })
+                .catch(error => {
+                    console.error('Error fetching event image sources from backend:', error)
+                    console.log('Event Ranking Length:', this.eventRanking.length)
+                    console.log('User Ranking Length:', this.userRanking.length)
+                    this.eventImgSrc = Array(this.eventRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
+                })
+        },
+        fetchUserImgSrc() {
+            axios.get('http://localhost:8080/user-img-src')
+                .then(response => {
+                    this.userImgSrc = response.data
+                })
+                .catch(error => {
+                    console.error('Error fetching user image sources from backend:', error)
+                    this.userImgSrc = Array(this.userRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
+                })
+        },
+        fetchUserRanking() {
+            return axios.get('http://localhost:8080')
+                .then(response => {
+                    // 直接将响应数据赋值给 userRanking
+                    this.userRanking = response.data
+                })
+                .catch(error => {
+                    console.error('Error fetching user ranking from backend:', error)
+                    // Log the length of localUserRanking and check its content
+                    console.log('Local user ranking data:', localUserRanking)
+                    console.log('Type of userRanking:', typeof this.userRanking)
+                    console.log('User Ranking:', this.userRanking)
+                    // Fallback to local data
+                    this.userRanking = localUserRanking
+                })
+        },
+        fetchEventRanking() {
+            return axios.get('http://localhost:8080')
+                .then(response => {
+                    // 直接将响应数据赋值给 eventRanking
+                    this.eventRanking = response.data
+                })
+                .catch(error => {
+                    console.error('Error fetching user ranking from backend:', error)
+                    // Log the length of localUserRanking and check its content
+                    console.log('Local Event ranking data:', localEventRanking)
+                    console.log('Type of eventRanking:', typeof this.eventRanking)
+                    console.log('Event Ranking:', this.eventRanking)
+                    // Fallback to local data
+                    this.eventRanking = localEventRanking
+                })
+        },
+        toggleChart() {
+            this.$nextTick(() => {
+                if (this.showEventInfo) this.initEventChart()
+                if (this.showEventRanking) this.initEventChart()
+                if (this.showUserInfo) this.initUserChart()
+                if (this.showUserRanking) this.initUserChart()
+            })
+        },
+
+
+        navigateToEvent(event) {
+            console.log('Navigating to event:', event)
+            alert(event)
+            // // 根据事件触发跳转，可以使用 event 参数构建跳转的 URL
+            // const url = `/eventPage?eventName=${encodeURIComponent(event)}`;
+            // window.location.href = url;
+        },
     }
-  }
-  </script>
+}
+</script>
   
-  <style scoped>
-  .dashboard {
+<style scoped>
+.dashboard {
     padding: 10px;
-  }
-  
-  hr {
+}
+
+hr {
     background-color: #b3dbf1;
     height: 1px;
     border: none
-  }
-  
-  .searchbar {
+}
+
+.searchbar {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  
-  }
-  
-  .searchbar .el-button {
+
+}
+
+.searchbar .el-button {
     border: none;
     padding: 0;
-  }
-  
-  .icon-group {
+}
+
+.icon-group {
     display: flex;
     gap: 50px;
     /* Add some space between icons */
-  }
-  
-  .icon-item {
+}
+
+.icon-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-  }
-  
-  .icon-item div {
+}
+
+.icon-item div {
     margin-top: 5px;
     /* Add some space between icon and text */
-  }
-  
-  .LesMiserables {
+}
+
+.LesMiserables {
     margin-bottom: 10px;
-  }
-  
-  .date-selectors {
+}
+
+.date-selectors {
     display: flex;
     gap: 50px;
     /* Add some space between date pickers */
     justify-content: center;
     /* Center the date pickers */
-  }
-  
-  .title-with-button {
+}
+
+.title-with-button {
     display: flex;
     align-items: center;
     margin-left: 10px;
-  }
-  
-  .content-conclusion {
+}
+
+.content-conclusion {
     text-align: center;
     font-family: "Microsoft YaHei", serif;
     margin-bottom: 30px;
     font-weight: bold;
     color: deepskyblue;
     margin-top: 30px;
-  }
-  
-  .darkContainer {
+}
+
+.darkContainer {
     height: 700px;
     width: 350px;
     /* 容器的宽度，可以根据需要调整 */
@@ -586,9 +583,9 @@
     margin: 40px;
     position: relative;
     /* 为容器内的绝对定位元素提供参照 */
-  }
-  
-  .lightContainer {
+}
+
+.lightContainer {
     height: 700px;
     width: 350px;
     /* 容器的宽度，可以根据需要调整 */
@@ -598,23 +595,23 @@
     /* 使容器变成平行四边形 */
     padding: 20px;
     margin: 40px;
-  }
-  
-  .container-wrapper {
+}
+
+.container-wrapper {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-  }
-  
-  .ranking-title {
+}
+
+.ranking-title {
     font-family: "Microsoft YaHei", serif;
     color: white;
     font-weight: bold;
     font-size: 20px;
     transform: skew(0, -10deg);
-  }
-  
-  .ranking-content div {
+}
+
+.ranking-content div {
     margin-top: 30px;
     font-size: 22px;
     color: white;
@@ -628,9 +625,9 @@
     /* 固定行高，使其与字体大小一致 */
     position: relative;
     /* 相对定位，为子元素的绝对定位提供参照 */
-  }
-  
-  .ranking-content img {
+}
+
+.ranking-content img {
     height: 42px;
     /* 设置与字体大小相同的高度 */
     width: 42px;
@@ -647,22 +644,34 @@
     /* 绝对定位，固定图片位置 */
     right: 0;
     /* 图片贴着容器右端 */
-  }
-  
-  .light-ranking-title {
+}
+
+.light-ranking-title {
     font-family: "Microsoft YaHei", serif;
     color: deepskyblue;
     font-weight: bold;
     font-size: 20px;
     transform: skew(0, -10deg);
-  }
-  
-  .light-ranking-content div {
+}
+
+.light-ranking-content div {
     margin-top: 30px;
     font-size: 22px;
     color: lightgray;
     /* 标题颜色 */
     transform: skew(0, -10deg);
     /* 使文本校正回正 */
-  }</style>
+}
+
+
+.ranking-item {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.ranking-item:hover {
+    color: blue;
+    text-decoration: underline;
+}
+</style>
   

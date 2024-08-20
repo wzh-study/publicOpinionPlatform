@@ -57,19 +57,18 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: '时间轴', icon: 'form' }
-      }
-    ]
-  },
-
+//   {
+//     path: '/form',
+//     component: Layout,
+//     children: [
+//       {
+//         path: 'index',
+//         name: 'Form',
+//         component: () => import('@/views/form/index'),
+//         meta: { title: '时间轴', icon: 'form' }
+//       }
+//     ]
+//   },
   {
     path: '/userpage',
     component: Layout,
@@ -82,16 +81,43 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
-    path: '/recognitionRiskEstimation',
+    path: '/eventPage',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'recognitionRiskEstimation',
-        component: () => import('@/views/recognitionRiskEstimation/index.vue'),
-        meta: { title: '认知风险评估', icon: 'link' }
+        name: 'eventPage',
+        component: () => import('@/views/eventPage/index.vue'),
+        meta: { title: '事件页', icon: 'form' }
+      }
+    ]
+  },
+
+//   {
+//     path: '/recognitionRiskEstimation',
+//     component: Layout,
+//     children: [
+//       {
+//         path: 'index',
+//         name: 'recognitionRiskEstimation',
+//         component: () => import('@/views/recognitionRiskEstimation/index.vue'),
+//         meta: { title: '认知风险评估', icon: 'link' }
+//       }
+//     ]
+//   },
+
+  {
+    path: '/qunzu',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'qunzu',
+        component: () => import('@/views/QunZu/index.vue'),
+        // component: () => import('@/views/QunZu/demo.vue'),
+
+        meta: { title: '群组与用户敌意分析', icon: 'link' }
       }
     ]
   },

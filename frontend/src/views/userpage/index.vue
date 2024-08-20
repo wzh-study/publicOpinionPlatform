@@ -230,18 +230,107 @@
                     <div ref="opinionChart" style="width: 50%; height: 400px;"></div>
 
                     <!-- Right Part: Element UI Table -->
-                    <div style="width: 50%;">
-                        <el-table :data="opinionTableData" style="width: 100%;" border>
-                            <el-table-column prop="field" label="话题" width="120">
+                    <div style="width: 50%; margin-top: 20px;">
+                        <div style="
+                                background-color: rgb(255, 240, 245);
+                                padding: 10px;
+                                text-align: center;
+                                width: 90%;
+                                /* font-weight: bold; */
+                                border-bottom: 1px solid #ddd;
+                            ">
+                            话题╱观点与对应原文
+                        </div>
+                        <el-table :data="OpinionTableData" style="width: 90%;" stripe :show-header="false" border>
+                            <!-- 第二行：话题 -->
+                            <el-table-column prop="field" width="120">
                             </el-table-column>
-                            <el-table-column prop="value" label="原文(部分)">
+                            <!-- 第三行：原文(部分) -->
+                            <el-table-column prop="value">
+                            </el-table-column>
+
+                        </el-table>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="content-conclusion" style="margin-bottom: 10px; display: inline-block;">[J] 针对{{ xxx }}的立场
+                    </div>
+
+                    <el-select v-model="selectedStandPointUser" placeholder="选择用户名"
+                        style="display: inline-block; vertical-align: middle; margin-left: 10px;"
+                        @change="handleUserChange">
+                        <el-option v-for="user in StandpointData" :key="user.username" :label="user.username"
+                            :value="user.username">
+                        </el-option>
+                    </el-select>
+                    <!-- <el-button type="primary" style="display: inline-block; vertical-align: middle; margin-left: 10px;"
+                        round @click="switchUserStandPoint">切换</el-button> -->
+                </div>
+                <div style="width: 100%; display: flex; justify-content: space-around; align-items: top center;">
+                    <div ref="standpointChart" style="width: 50%; height: 400px;"></div>
+
+                    <!-- Todo 下面为对应的表格(element-ui) 表格为2行三列 第一行为一个表头(占三列), 第二行第一列为StandpointData[0]中的对应的username字段，第二列为对应的StandpointData[0].data中name字段，第三列为StandpointData[0].data中text字段-->
+                    <div style="width: 50%; margin-top: 20px;" >
+                        <div v-on="selectedStandPointUser" style="
+                                background-color: rgb(255, 240, 245);
+                                padding: 10px;
+                                text-align: center;
+                                width: 90%;
+                                /* font-weight: bold; */
+                                border-bottom: 1px solid #ddd;
+                             ">
+                            针对{{ selectedStandPointUser }}的【xx】立场对应原文(部分)
+                        </div>
+                        <el-table :data="StandpointtableData" style="width: 90%" stripe :show-header="false">
+                            <!-- 表头 -->
+                            <el-table-column prop="header" align="center">
+                            </el-table-column>
+
+                            <!-- 用户名 -->
+                            <el-table-column prop="username" width="120">
+                            </el-table-column>
+
+                            <!-- 立场名称 -->
+                            <el-table-column prop="name" width="120">
+                            </el-table-column>
+
+                            <!-- 立场描述 -->
+                            <el-table-column prop="text">
                             </el-table-column>
                         </el-table>
                     </div>
                 </div>
 
-                <div style="width: 100%; text-align: center;">
 
+
+                <div class="content-conclusion" style="margin-bottom: 10px;">[K] 情绪分布 </div>
+                <div style="width: 100%; display: flex; justify-content: space-around; align-items: top center;">
+                    <!-- Todo 划分成两部分  各占50%   左半部分是echarts图 axios请求的数据为OpinionViewData  包含观点和原文信息  右半部分是对应的表格(element-ui) 表格左边第一列为字段(观点，对应原文)，第二列为对应观点和原文字符串-->
+                    <!-- Left Part: ECharts Visualization -->
+                    <div ref="emotionChart" style="width: 50%; height: 400px;"></div>
+
+                    <!-- Right Part: Element UI Table -->
+                    <div style="width: 50%;">
+                        <div v-on="selectedStandPointUser" style="
+                                background-color: rgb(255, 240, 245);
+                                padding: 10px;
+                                text-align: center;
+                                width: 90%;
+                                /* font-weight: bold; */
+                                border-bottom: 1px solid #ddd;
+                             ">
+                            【极端愤怒】情绪对应原文(部分)
+                        </div>
+                        <el-table :data="OpinionTableData" style="width: 90%;" border stripe :show-header="false">
+                            <!-- 第二行：话题 -->
+                            <el-table-column prop="field" width="120">
+                            </el-table-column>
+                            <!-- 第三行：原文(部分) -->
+                            <el-table-column prop="value">
+                            </el-table-column>
+                        </el-table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -251,6 +340,22 @@
             <div class="title-with-button">
                 <el-switch v-model="showUserPublicOpinion" />
                 <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户参与舆情</h3>
+            </div>
+
+            <div class="UserPublicOpinion-container">
+                <div v-for="(item, index) in timelineData" :key="index" class="UserPublicOpinion-item">
+                    <div class="UserPublicOpinion-month">{{ item.month }}</div>
+                    <div class="UserPublicOpinion-content">
+                        <div class="UserPublicOpinion-image">
+                            <img :src="item.image" alt="Image not found">
+                        </div>
+                        <div class="UserPublicOpinion-description">
+                            <ul>
+                                <li v-for="(desc, descIndex) in item.descriptions" :key="descIndex">{{ desc }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -483,9 +588,94 @@ export default {
 
                 },
             ],
-            opinionTableData: [],
+            OpinionTableData: [
+                {
+                    name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权',
+                    group: 0,
+                    text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
+                            ---\n
+                            当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
+                            ---\n
+                            我们是菲律宾青年。我们停在了西菲律宾海\n
+                            ---\n
+                            我们是菲律宾青年。我们停在了西菲律宾海\n
+                            ---\n
+                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
+                            ---\n
+                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
+                            ---\n
+                            当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
+
+                },
+            ],
+            StandpointData: [
+                {
+                    username: '中共政党',
+                    data: [
+                        { value: 0.20, name: '声援', text: '我们是菲律宾青年，我们呼吁团结捍卫在西菲律宾海的主权，声援西菲律宾政府' },
+                        { value: 0.20, name: '敌意', text: '杀杀杀' },
+                        { value: 0.20, name: '自豪', text: '中国祖国建设真好' },
+                        { value: 0.20, name: '中立', text: '我觉得还不错' },
+                        { value: 0.20, name: '反对', text: '好好好' }
+                    ]
+                },
+
+                {
+                    username: '台湾政党',
+                    data: [
+                        { value: 0.25, name: '声援', text: '我们是菲律宾青年，我们呼吁团结捍卫在西菲律宾海的主权，声援西菲律宾政府11' },
+                        { value: 0.15, name: '敌意', text: '杀杀杀1111' },
+                        { value: 0.19, name: '自豪', text: '中国祖国建设真好11' },
+                        { value: 0.21, name: '中立', text: '我觉得还不错111' },
+                        { value: 0.20, name: '反对', text: '好好好11' }
+                    ]
+                },
+            ],
+            selectedStandPointUser: '中共政党',
+            StandpointtableData: [],
+
+
+            EmotionData: [],
             //  用户参与舆情数据
 
+            timelineData: [
+                {
+                    month: 'Jan.',
+                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
+                    descriptions: [
+                        '选举',
+                        '民进党',
+                        '国民党'
+                    ]
+                },
+                {
+                    month: 'Feb.',
+                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
+                    descriptions: [
+                        '中共',
+                        '台湾',
+                        '给中国军'
+                    ]
+                },
+                {
+                    month: 'Apr.',
+                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
+                    descriptions: [
+                        '马英',
+                        '习近平',
+                        '台湾'
+                    ]
+                },
+                {
+                    month: 'May',
+                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
+                    descriptions: [
+                        '民主',
+                        '暴力',
+                        '民进党'
+                    ]
+                },
+            ],
 
 
             //  所有左上角按钮值
@@ -516,6 +706,8 @@ export default {
         this.fetchUserTopRelationData()
         //  用户语义
         this.fetchUserTopicsOpinionsData()
+        this.fetchUserStandpointData()
+        this.fetchUserEmotionalData()
         //  用户参与舆情
     },
 
@@ -1176,7 +1368,7 @@ export default {
         },
 
         prepareTableData(selectedNode) {
-            this.opinionTableData = [
+            this.OpinionTableData = [
                 {
                     field: '话题',
                     value: selectedNode.name,
@@ -1187,6 +1379,169 @@ export default {
                 }
             ];
         },
+
+        fetchUserStandpointData() {
+            axios.get('https://localhost:8080/user/Standpoint')
+                .then(response => {
+                    this.StandpointData = response.data;  //  这里应该获取所有话题观点数据
+                    this.initStandpointChart(this.StandpointData[0]);  //  图加载所有话题观点
+                    this.generateStandpointTableData(this.StandpointData[0])
+                })
+                .catch(error => {
+                    console.error('Error fetching OpinionViewData:', error);
+                    this.initStandpointChart(this.StandpointData[0]);
+                    this.generateStandpointTableData(this.StandpointData[0])
+                });
+        },
+
+        switchUserStandPoint() {
+            if (this.selectedStandPointUser) {
+                const user = this.StandpointData.find(user => user.username === this.selectedStandPointUser);
+                if (user) {
+                    this.initStandpointChart(user);
+                }
+            } else {
+                // 如果没有选择用户，默认展示第一个
+                const defaultUser = this.StandpointData[0];
+                this.initStandpointChart(defaultUser);
+            }
+        },
+        handleUserChange(value) {
+            // 当选择改变时，立即调用 initOpinionChart 展示选中用户的观点图表
+            const user = this.StandpointData.find(user => user.username === value);
+            if (user) {
+                this.initStandpointChart(user);
+            }
+        },
+
+        initStandpointChart(data) {
+            const chartDom = this.$refs.standpointChart;
+            const myChart = echarts.init(chartDom);
+
+            // 转换输入数据
+            const formattedData = data.data.map(item => {
+                return {
+                    value: item.value,
+                    name: item.name
+                };
+            });
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        // 根据传入的 params 找到对应的描述
+                        const item = data.data.find(d => d.name === params.name);
+                        return `${params.name}: ${params.value * 100}%<br/>${item.text}`;
+                    },
+                },
+                legend: {
+                    top: '5%',
+                    left: 'center'
+                },
+
+                series: [
+                    {
+                        name: 'Access From',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: true,  // 显示标签
+                            position: 'outside',  // 标签显示在图表外侧（或可以设置为 'inside' 显示在图内）
+                            formatter: '{b}:{d}%'  // 格式化标签内容为 名称: (百分比)
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 40,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        data: formattedData
+                    }
+                ]
+            };
+
+            myChart.setOption(option);
+        },
+
+        generateStandpointTableData() {
+            // 将 StandpointData 转换为表格数据格式
+            this.StandpointtableData = this.StandpointData.reduce((acc, curr) => {
+                curr.data.forEach(dataItem => {
+                    acc.push({
+                        username: curr.username,
+                        name: dataItem.name,
+                        text: dataItem.text
+                    });
+                });
+                return acc;
+            }, []);
+        },
+
+        fetchUserEmotionalData() {
+            axios.get('https://localhost:8080/user/EmotionDistribution')
+                .then(response => {
+                    this.OpinionTopicData = response.data;  //  这里应该获取所有话题观点数据
+                    this.initEmotionalChart(this.EmotionData);  //  图加载所有话题观点
+                    // this.prepareTableData(this.OpinionTopicData[0]);  //  这里表格应该展示选中的echarts图上的数据 默认有一个选中
+                })
+                .catch(error => {
+                    console.error('Error fetching OpinionViewData:', error);
+                    this.initEmotionalChart(this.EmotionData);
+                    // this.prepareTableData(this.OpinionTopicData[0]);
+                });
+        },
+
+        initEmotionalChart(data) {
+            const chartDom = this.$refs.emotionChart;
+            const myChart = echarts.init(chartDom);
+
+            const option = {
+                angleAxis: {
+                    type: 'category',
+                    data: ['愤怒', '厌恶', '恐惧', '悲伤', '惊喜', '蔑视', '兴奋', '自豪']
+                },
+                radiusAxis: {},
+                polar: {},
+                series: [
+                    {
+                        type: 'bar',
+                        data: [2, 4, 6, 1, 3, 2, 1, 3],
+                        coordinateSystem: 'polar',
+                        name: '情绪',
+                        stack: 'a',
+                        emphasis: {
+                            focus: 'series'
+                        }
+                    },
+                    {
+                        type: 'bar',
+                        data: [1, 2, 3, 4, 1, 2, 5],
+                        coordinateSystem: 'polar',
+                        name: '极端情绪',
+                        stack: 'a',
+                        emphasis: {
+                            focus: 'series'
+                        }
+                    }
+                ],
+                legend: {
+                    show: true,
+                    data: ['情绪', '极端情绪']
+                }
+            }
+            myChart.setOption(option)
+        }
     },
 };
 
@@ -1284,4 +1639,59 @@ hr {
     color: deepskyblue;
     margin-top: 20px;
 }
+
+
+
+
+/* 用户参与舆情样式 */
+.UserPublicOpinion-container {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.UserPublicOpinion-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.UserPublicOpinion-month {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.UserPublicOpinion-content {
+    display: flex;
+    align-items: center;
+}
+
+.UserPublicOpinion-image img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.UserPublicOpinion-description {
+    max-width: 400px;
+}
+
+.UserPublicOpinion-description ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.UserPublicOpinion-description li {
+    margin-bottom: 5px;
+}
 </style>
+
+
