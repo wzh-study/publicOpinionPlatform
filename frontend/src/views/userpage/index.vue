@@ -28,82 +28,85 @@
 
         <div class="userinfo">
             <div class="title-with-button">
-                <el-switch v-model="showUserInfo" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户的基本信息</h3>
+                <el-switch v-model="showUserInfo" style="transform: scale(1.25);" />
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户的基本信息</h2>
             </div>
 
-            <el-row style="margin-top: 0; width: 100%; display: flex; flex-wrap: wrap;">
-                <!-- User Information Container -->
-                <el-col :span="14" style="display: flex; flex-direction: column; justify-content: center; ">
-                    <div class="user-info-container">
-                        <el-row style="display: flex; justify-content: space-between;">
-                            <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
-                                <span style="margin-right: 16px;">用户名: </span>
-                                <el-select v-model="userinfo_selected" placeholder="请选择" @change="fetchUserData">
-                                    <el-option v-for="username in usernames" :key="username" :label="username"
-                                        :value="username" />
-                                </el-select>
-                            </el-col>
+            <div v-show="showUserInfo">
+                <el-row style="margin-top: 0; width: 100%; display: flex; flex-wrap: wrap;">
+                    <!-- User Information Container -->
+                    <el-col :span="14" style="display: flex; flex-direction: column; justify-content: center; ">
+                        <div class="user-info-container">
+                            <el-row style="display: flex; justify-content: space-between;">
+                                <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
+                                    <span style="margin-right: 16px;">用户名: </span>
+                                    <el-select v-model="userinfo_selected" placeholder="请选择" @change="fetchUserData">
+                                        <el-option v-for="username in usernames" :key="username" :label="username"
+                                            :value="username" />
+                                    </el-select>
+                                </el-col>
 
-                            <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
-                                <span style="margin-right: 16px;">用户头像: </span>
-                                <img :src="userProfile.imageUrl" style="border-radius: 50%; width: 120px; height: 120px;">
-                            </el-col>
-                        </el-row>
+                                <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
+                                    <span style="margin-right: 16px;">用户头像: </span>
+                                    <img :src="userProfile.imageUrl"
+                                        style="border-radius: 50%; width: 120px; height: 120px;">
+                                </el-col>
+                            </el-row>
 
-                        <!-- User Data Table -->
-                        <el-table class="custom-el-table" :data="tableRows" style="margin-top: 100px;">
-                            <el-table-column v-for="(item, index) in tableData" :key="index" :prop="'col' + index"
-                                :label="item.key" :cell-style="{ background: 'yellow' }" />
-                        </el-table>
+                            <!-- User Data Table -->
+                            <el-table class="custom-el-table" :data="tableRows" style="margin-top: 100px;">
+                                <el-table-column v-for="(item, index) in tableData" :key="index" :prop="'col' + index"
+                                    :label="item.key" :cell-style="{ background: 'yellow' }" />
+                            </el-table>
 
-                        <div class="content-conclusion">
-                            [B] 活跃与影响面
+                            <div class="content-conclusion">
+                                [B] 活跃与影响面
+                            </div>
                         </div>
-                    </div>
-                </el-col>
+                    </el-col>
 
-                <!-- Right Side (40% width) -->
-                <el-col :span="9" style="margin-left: 20px; padding-left: 10px; box-sizing: border-box;">
-                    <el-collapse v-model="activeNames"
-                        style="width: 100%; max-height: 400px; overflow-y: auto; ; font-size: 12px;">
-                        <el-collapse-item class="custom-collapse-item" title="基础信息" name="1">
-                            <el-table :data="basicInfo" border style="width: 100%">
-                                <el-table-column prop="key" label="信息项" width="100" />
-                                <el-table-column prop="value" label="详情" />
-                            </el-table>
-                        </el-collapse-item>
-                        <!-- Followers List -->
-                        <el-collapse-item class="custom-collapse-item" title="粉丝列表" name="2">
-                            <el-table :data="followersList" border style="width: 100%">
-                                <el-table-column prop="name" label="粉丝名称" />
-                            </el-table>
-                        </el-collapse-item>
+                    <!-- Right Side (40% width) -->
+                    <el-col :span="9" style="margin-left: 20px; padding-left: 10px; box-sizing: border-box;">
+                        <el-collapse v-model="activeNames"
+                            style="width: 100%; max-height: 400px; overflow-y: auto; ; font-size: 12px;">
+                            <el-collapse-item class="custom-collapse-item" title="基础信息" name="1">
+                                <el-table :data="basicInfo" border style="width: 100%">
+                                    <el-table-column prop="key" label="信息项" width="100" />
+                                    <el-table-column prop="value" label="详情" />
+                                </el-table>
+                            </el-collapse-item>
+                            <!-- Followers List -->
+                            <el-collapse-item class="custom-collapse-item" title="粉丝列表" name="2">
+                                <el-table :data="followersList" border style="width: 100%">
+                                    <el-table-column prop="name" label="粉丝名称" />
+                                </el-table>
+                            </el-collapse-item>
 
-                        <!-- Following List -->
-                        <el-collapse-item class="custom-collapse-item" title="关注列表" name="3">
-                            <el-table :data="followingList" border style="width: 100%">
-                                <el-table-column prop="name" label="关注名称" />
-                            </el-table>
-                        </el-collapse-item>
-                    </el-collapse>
-                    <!-- Table Title -->
-                    <div class="content-conclusion">
-                        [A] 基础信息
-                    </div>
-                </el-col>
-            </el-row>
+                            <!-- Following List -->
+                            <el-collapse-item class="custom-collapse-item" title="关注列表" name="3">
+                                <el-table :data="followingList" border style="width: 100%">
+                                    <el-table-column prop="name" label="关注名称" />
+                                </el-table>
+                            </el-collapse-item>
+                        </el-collapse>
+                        <!-- Table Title -->
+                        <div class="content-conclusion">
+                            [A] 基础信息
+                        </div>
+                    </el-col>
 
+                </el-row>
+            </div>
         </div>
 
         <hr>
 
         <div class="UserBehaviourRegular">
             <div class="title-with-button">
-                <el-switch v-model="showBehaviourRegular" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户行为规律</h3>
+                <el-switch v-model="showBehaviourRegular" style="transform: scale(1.25);" />
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户行为规律</h2>
             </div>
-            <div class="UserBehaviourRegular-container"
+            <div class="UserBehaviourRegular-container" v-show="showBehaviourRegular"
                 style="display: flex; justify-content: space-around; align-items: center;">
                 <div style="width: 800px; text-align: center;">
                     <div ref="UserBehaviourRegularChart" style="width: 100%; height: 400px;" />
@@ -128,10 +131,10 @@
 
         <div class="UserPersonalitiesValues">
             <div class="title-with-button">
-                <el-switch v-model="showUserPersonalitiesValues" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户人格与价值观</h3>
+                <el-switch v-model="showUserPersonalitiesValues"  style="transform: scale(1.25);" />
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户人格与价值观</h2>
             </div>
-            <div class="UserPersonalitiesValues-container"
+            <div class="UserPersonalitiesValues-container" v-show="showUserPersonalitiesValues"
                 style="display: flex; justify-content: space-around; align-items: center;">
                 <div style="width: 400px; text-align: center;">
                     <div ref="UserPersonalitiesValuesRadarChart" style="height: 400px;" />
@@ -148,10 +151,10 @@
 
         <div class="UserCenterNetwork">
             <div class="title-with-button">
-                <el-switch v-model="showUserCenterNetwork" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户中心网络</h3>
+                <el-switch v-model="showUserCenterNetwork" style="transform: scale(1.25);"/>
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户中心网络</h2>
             </div>
-            <div class="UserCenterNetwork-container"
+            <div class="UserCenterNetwork-container"  v-show="showUserCenterNetwork"
                 style="display: flex; justify-content: space-around; align-items: center;">
                 <!-- Social Graph -->
                 <div style="width: 300px; text-align: center;">
@@ -218,11 +221,11 @@
 
         <div class="UserSemantic">
             <div class="title-with-button">
-                <el-switch v-model="showUserSemantic" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户语义</h3>
+                <el-switch v-model="showUserSemantic" style="transform: scale(1.25);" />
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户语义</h2>
             </div>
 
-            <div class="UserSemantic-container">
+            <div class="UserSemantic-container" v-show="showUserSemantic">
                 <div class="content-conclusion" style="margin-bottom: 10px;">[H] 主要话题短语和观点</div>
                 <div style="width: 100%; display: flex; justify-content: space-around; align-items: top center;">
                     <!-- Todo 划分成两部分  各占50%   左半部分是echarts图 axios请求的数据为OpinionViewData  包含观点和原文信息  右半部分是对应的表格(element-ui) 表格左边第一列为字段(观点，对应原文)，第二列为对应观点和原文字符串-->
@@ -271,7 +274,7 @@
                     <div ref="standpointChart" style="width: 50%; height: 400px;"></div>
 
                     <!-- Todo 下面为对应的表格(element-ui) 表格为2行三列 第一行为一个表头(占三列), 第二行第一列为StandpointData[0]中的对应的username字段，第二列为对应的StandpointData[0].data中name字段，第三列为StandpointData[0].data中text字段-->
-                    <div style="width: 50%; margin-top: 20px;" >
+                    <div style="width: 50%; margin-top: 20px;">
                         <div v-on="selectedStandPointUser" style="
                                 background-color: rgb(255, 240, 245);
                                 padding: 10px;
@@ -338,11 +341,11 @@
 
         <div class="UserPublicOpinion">
             <div class="title-with-button">
-                <el-switch v-model="showUserPublicOpinion" />
-                <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">用户参与舆情</h3>
+                <el-switch v-model="showUserPublicOpinion" style="transform: scale(1.25); "/>
+                <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户参与舆情</h2>
             </div>
 
-            <div class="UserPublicOpinion-container">
+            <div class="UserPublicOpinion-container" v-show="showUserPublicOpinion">
                 <div v-for="(item, index) in timelineData" :key="index" class="UserPublicOpinion-item">
                     <div class="UserPublicOpinion-month">{{ item.month }}</div>
                     <div class="UserPublicOpinion-content">
@@ -815,10 +818,10 @@ export default {
         initUserBehaviourTimeChart(data) {
             var myChart = echarts.init(this.$refs.UserBehaviourRegularChart)
             var option = {
-                title: {
-                    text: 'UserBehaviourTimeRegular',
-                    left: '1%'
-                },
+                // title: {
+                //     text: 'UserBehaviourTimeRegular',
+                //     left: '1%'
+                // },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -841,17 +844,17 @@ export default {
                         saveAsImage: {}
                     }
                 },
-                dataZoom: [
-                    {
-                        startValue: '2024/01'
-                    },
-                    {
-                        type: 'inside'
-                    }
-                ],
+                // dataZoom: [
+                //     {
+                //         startValue: '2024/01'
+                //     },
+                //     {
+                //         type: 'inside'
+                //     }
+                // ],
                 visualMap: {
                     top: 50,
-                    right: 40,
+                    right: 0,
                     pieces: [
                         {
                             gt: 0,
@@ -1605,7 +1608,7 @@ hr {
 
 /*  第一部分样式 */
 
-.userinfo h3 {
+.userinfo h2 {
     color: #4552ba;
     font-weight: bold;
 }

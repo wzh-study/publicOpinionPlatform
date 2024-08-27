@@ -35,27 +35,7 @@ export const constantRoutes = [
     }]
   },
 
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: '账号信息', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: '账号基本信息', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: '账号贴文信息', icon: 'tree' }
-      }
-    ]
-  },
+  
 
 //   {
 //     path: '/form',
@@ -117,7 +97,28 @@ export const constantRoutes = [
         component: () => import('@/views/QunZu/index.vue'),
         // component: () => import('@/views/QunZu/demo.vue'),
 
-        meta: { title: '群组与用户敌意分析', icon: 'link' }
+        meta: { title: '群组与敌意分析页', icon: 'link' }
+      }
+    ]
+  },
+  {
+    path: '/example',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: '工具类', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: '账号基本信息', icon: 'table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: '账号贴文信息', icon: 'tree' }
       }
     ]
   },

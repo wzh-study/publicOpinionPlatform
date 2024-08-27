@@ -13,8 +13,9 @@
     background-color: $menuBg;
     height: 100%;
     position: fixed;
+    // margin-top: 60px;
     font-size: 0px;
-    top: 0;
+    top: 0px;
     bottom: 0;
     left: 0;
     z-index: 1001;
@@ -31,6 +32,14 @@
 
     .el-scrollbar__bar.is-vertical {
       right: 0px;
+    }
+    // 调整字体大小
+    .el-menu-item {
+        font-size: 18px;
+    }
+
+    .el-submenu__title {
+        font-size: 18px;
     }
 
     .el-scrollbar {
