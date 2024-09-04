@@ -339,32 +339,85 @@
         </div>
         <hr>
 
-        <div class="UserPublicOpinion">
-            <div class="title-with-button">
+
+        <!-- -------------------------------------------------------------------------------------------------- -->
+      <!-- CH6 用户参与舆情   TODO：残次品，需要大修改- -->
+      <!-- -------------------------------------------------------------------------------------------------- -->
+      <div class="UserPublicSentiment">
+        <div class="title-with-button">
                 <el-switch v-model="showUserPublicOpinion" style="transform: scale(1.25); "/>
                 <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户参与舆情</h2>
-            </div>
-
-            <div class="UserPublicOpinion-container" v-show="showUserPublicOpinion">
-                <div v-for="(item, index) in timelineData" :key="index" class="UserPublicOpinion-item">
-                    <div class="UserPublicOpinion-month">{{ item.month }}</div>
-                    <div class="UserPublicOpinion-content">
-                        <div class="UserPublicOpinion-image">
-                            <img :src="item.image" alt="Image not found">
-                        </div>
-                        <div class="UserPublicOpinion-description">
-                            <ul>
-                                <li v-for="(desc, descIndex) in item.descriptions" :key="descIndex">{{ desc }}</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-        <hr>
-
+        <div
+          v-show="showUserPublicOpinion"
+          class="user-panel"
+          style="display: flex; flex-direction: column; align-items: center; height: 100%;"
+        >
+          <!-- 底部区域（待定） -->
+          <div class="custom-timeline">
+            <div
+              v-for="(item, index) in userParticipationTimeline"
+              :key="index"
+              style="display: flex; align-items: center; position: relative; margin-bottom: 100px;"
+            > <!-- 增大节点间隔 -->
+              <!-- 时间轴连线（仅非首个节点显示） -->
+              <div
+                v-if="index !== 0"
+                style="border-left: 10px solid rgb(0,157,255); height: 220px; position: absolute; left: 46%; transform: translateX(-70%);margin-bottom: 260px;"
+              />
+  
+              <!-- 节点内容包裹 -->
+              <div style="display: flex; align-items: center;">
+                <!-- 左侧图片区域 -->
+                <div style="display: flex; flex-wrap: wrap;">
+                  <div
+                    v-for="(img, imgIndex) in item.images"
+                    :key="imgIndex"
+                    style="position: relative; margin: 20px; margin-top: 50px;"
+                  >
+                    <img
+                      :src="img.src"
+                      :alt="img.title"
+                      style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;"
+                    >
+                    <div
+                      style="position: absolute; bottom: 85px; left: 0; width: 100%; text-align: center; color: gray; padding: 3px 0;  
+                  display: -webkit-box; /* 将元素设为伸缩盒模型显示 */
+                  -webkit-line-clamp: 2; /* 限制在一个块元素显示的文本的行数 */
+                  -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */ 
+                  overflow: hidden; /* 隐藏超出的内容 */
+                  text-overflow: ellipsis;"
+                    >
+                      {{ img.title }}</div>
+                  </div>
+                </div>
+  
+                <!-- 中间日期圆圈 -->
+                <div
+                  style="width: 55px; height: 55px; border-radius: 50%; background-color: rgb(0,157,255); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;"
+                >
+                  {{ item.date }}</div>
+  
+                <!-- 右侧文本区域 -->
+                <div style="display: flex; flex-direction: column;">
+                  <div
+                    v-for="(text, textIndex) in item.texts"
+                    :key="textIndex"
+                    style="margin-bottom: 15px; list-style-type: none; margin-left: 20px;color: gray;"
+                  >
+                    <i class="el-icon-circle-check" style="margin-right: 5px;" />{{ text }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
     </div>
+
+        
 </template>
 
 <script>
@@ -641,44 +694,7 @@ export default {
             EmotionData: [],
             //  用户参与舆情数据
 
-            timelineData: [
-                {
-                    month: 'Jan.',
-                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
-                    descriptions: [
-                        '选举',
-                        '民进党',
-                        '国民党'
-                    ]
-                },
-                {
-                    month: 'Feb.',
-                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
-                    descriptions: [
-                        '中共',
-                        '台湾',
-                        '给中国军'
-                    ]
-                },
-                {
-                    month: 'Apr.',
-                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
-                    descriptions: [
-                        '马英',
-                        '习近平',
-                        '台湾'
-                    ]
-                },
-                {
-                    month: 'May',
-                    image: require('@/assets/userinfo_images/1.jpg'), // 替换为实际的图片路径
-                    descriptions: [
-                        '民主',
-                        '暴力',
-                        '民进党'
-                    ]
-                },
-            ],
+            userParticipationTimeline: [],
 
 
             //  所有左上角按钮值
@@ -690,7 +706,7 @@ export default {
             showUserPublicOpinion: true
         }
     },
-    mounted() {
+    async mounted() {
         //  用户基本信息
         if (this.usernames.length > 0) {
             this.userinfo_selected = this.usernames[0] // 设置默认选择第一个用户名
@@ -711,7 +727,9 @@ export default {
         this.fetchUserTopicsOpinionsData()
         this.fetchUserStandpointData()
         this.fetchUserEmotionalData()
-        //  用户参与舆情
+        //  用户参与舆情  //头像    // 群组参与舆情--时间轴数据
+        await this.fetchuserParticipationTimeline()
+        await this.$nextTick()
     },
 
     methods: {
@@ -1544,7 +1562,95 @@ export default {
                 }
             }
             myChart.setOption(option)
-        }
+        },
+
+
+        // 用户参与舆情
+        fetchBigVImgUrlList() {
+        axios.get('http://localhost:8080/big-v-url-data')
+          .then(response => {
+            this.BigVImgUrlList = response.data
+          })
+          .catch(error => {
+            console.error('Error fetching big v url data from backend:', error)
+            // Fallback to local data
+            this.BigVImgUrlList = [
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/cnn.png'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/woman.png'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/man.png'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/leader.png'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
+              require('@/assets/userinfo_images/group_users_images/demo.jpg')
+            ]
+          }
+          )
+      },
+      fetchuserParticipationTimeline() {
+        axios.get('http://localhost:8080/user-participation-timeline-data')
+          .then(response => {
+            this.userParticipationTimeline = response.data
+          })
+          .catch(error => {
+            console.error('Error fetching user participation timeline data from backend:', error)
+            // Fallback to local data
+            this.userParticipationTimeline = [
+              {
+                date: 'May.',
+                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
+                ],
+                texts: [` 中共对台湾武力恐吓
+                      台湾用行动抵御外部势力守护民主`,
+                  `给中国渔民教训
+                      国军终于硬气了一次`]
+              },
+              {
+                date: 'Apr.',
+                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
+                ],
+                texts: [` 中共对台湾武力恐吓
+                      台湾用行动抵御外部势力守护民主`,
+                  `给中国渔民教训
+                      国军终于硬气了一次`]
+              },
+              {
+                date: 'Feb.',
+                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
+                ],
+                texts: [` 马英九有意承担两岸和平使者
+                      马习会没有实质性内容`,
+                  ` 赖清德备受美国认可
+                      台海情势左右世界民主政治的发展`,
+                  ` 中国继续就快艇事件威胁台湾`]
+              },
+              {
+                date: 'Jan.',
+                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
+                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
+                ],
+                texts: [` 马英九有意承担两岸和平使者
+                      马习会没有实质性内容`,
+                  ` 赖清德备受美国认可
+                      台海情势左右世界民主政治的发展`,
+                  ` 中国继续就快艇事件威胁台湾`]
+              }
+            ]
+          }
+          )
+      }
     },
 };
 

@@ -7,7 +7,7 @@
     <div class="main-container">
         <!-- 添加网络认知态势感知平台的标题 -->
         <div style="background-color: rgb(27,93,225); width=100%; height: 60px; text-align: center;">
-        <span style="line-height: 60px; font-size: 40px; font-weight: bold; color: white; text-align: center; ">网 络 认 知 对 抗 态 势 平 台</span>
+        <span style="line-height: 60px; font-size: 40px; font-weight: bold; color: white; text-align: center; ">J M R H 网 络 R Z D K 态 势 平 台</span>
     </div>
       <div :class="{'fixed-header':fixedHeader}">
         <navbar />

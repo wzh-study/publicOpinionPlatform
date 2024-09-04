@@ -107,7 +107,12 @@
   
         this.listLoading = true
         try {
-          const response = await axios.get('http://localhost:8080/user/getAllBaseUserInfo', {
+        //   const response = await axios.get('http://localhost:8080/user/getAllBaseUserInfo', {
+        //     headers: {
+        //       'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
+        //     }
+        //   })
+            const response = await axios.get('http://47.122.26.58:8080/user/getAllBaseUserInfo', {
             headers: {
               'Authorization': 'Bearer YOUR_ACCESS_TOKEN'
             }
@@ -146,7 +151,16 @@
   
           try {
             // 使用实际的 POST 请求向后端发送 JSON 数据
-            const response = await axios.post('http://localhost:8080/user/getBaseUserInfo', {
+            // const response = await axios.post('http://localhost:8080/user/getBaseUserInfo', {
+            //   username: this.searchQueryUsername
+            // }, {
+            //   headers: {
+            //     'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+            //     'Content-Type': 'application/json' // 确保请求头为 JSON
+            //   }
+            // })
+
+            const response = await axios.post('http://47.122.26.58:8080/user/getBaseUserInfo', {
               username: this.searchQueryUsername
             }, {
               headers: {

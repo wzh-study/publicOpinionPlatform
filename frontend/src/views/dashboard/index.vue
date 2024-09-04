@@ -1,6 +1,6 @@
 <template>
     <div class="dashboard">
-      <div class="searchbar">
+        <div class="searchbar">
         <div class="icon-group">
           <div class="icon-item" @click="select('facebook')">
             <el-button
@@ -35,18 +35,18 @@
           <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
         </div>
       </div>
-  
+
       <hr>
-  
+
       <div class="LesMiserables">
         <div class="title-with-button">
-          <el-switch v-model="showEventInfo" @change="toggleChart" />
-          <h3 style="color: rgb(2, 157, 255); font-weight: bold; margin-left: 10px;">
+          <el-switch v-model="showEventInfo" @change="toggleChart" style="transform: scale(1.25);" />
+          <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px; " >
             舆情事件总览
-          </h3>
+          </h2>
         </div>
       </div>
-  
+
       <!-- This div will be toggled based on the showEventInfo value -->
       <div v-if="showEventInfo">
         <div id="eventChart" style="width: 800px; height: 400px; margin: 0 auto" />
@@ -55,14 +55,14 @@
         </div>
       </div>
       <hr>
-  
+
       <div class="title-with-button">
-        <el-switch v-model="showEventRanking" @change="toggleChart" />
-        <h3 style="color: rgb(2, 157, 255); font-weight: bold; margin-left: 10px;">
+        <el-switch v-model="showEventRanking" @change="toggleChart" style="transform: scale(1.25)" />
+        <h2 style="color: rgb(2, 157, 255); font-weight: bold; margin-left: 15px;">
           舆情事件排行榜
-        </h3>
+        </h2>
       </div>
-  
+
       <!-- 这部分会根据 showEventRanking 的值显示或隐藏 -->
       <div v-if="showEventRanking">
         <div class="container-wrapper">
@@ -76,7 +76,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               今日内容数量榜
@@ -87,7 +87,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               近期内容数量飙升榜
@@ -98,7 +98,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               敌意言论数量榜
@@ -110,7 +110,7 @@
             </div>
           </div>
         </div>
-  
+
         <div class="container-wrapper">
           <div class="lightContainer">
             <div class="light-ranking-title">
@@ -122,7 +122,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="darkContainer">
             <div class="ranking-title">
               今日参与人数榜
@@ -134,7 +134,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               近期参与人数飙升榜
@@ -145,7 +145,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               敌意言论比例榜
@@ -157,17 +157,17 @@
             </div>
           </div>
         </div>
-  
+
         <div class="content-conclusion">
           [B] 舆情事件分维度排行榜
         </div>
       </div>
       <hr>
-  
+
       <div class="LesMiserables">
         <div class="title-with-button">
-          <el-switch v-model="showUserInfo" @change="toggleChart" />
-          <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户总览</h3>
+          <el-switch v-model="showUserInfo" @change="toggleChart" style="transform: scale(1.25)" />
+          <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">关键用户总览</h2>
         </div>
       </div>
       <div v-if="showUserInfo">
@@ -177,10 +177,10 @@
         </div>
       </div>
       <hr>
-  
+
       <div class="title-with-button">
-        <el-switch v-model="showUserRanking" @change="toggleChart" />
-        <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">关键用户排行榜</h3>
+        <el-switch v-model="showUserRanking" @change="toggleChart" style="transform: scale(1.25)" />
+        <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">关键用户排行榜</h2>
       </div>
       <div v-if="showUserRanking">
         <div class="container-wrapper">
@@ -196,7 +196,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               大V用户(高阶互动)榜
@@ -209,19 +209,19 @@
               </div>
             </div>
           </div>
-  
+
           <div class="darkContainer">
-            <div class="ranking-title">
+            <div class="ranking-title" style="margin-left:8px">
               大V用户(出度)榜
             </div>
-            <div class="ranking-content">
+            <div class="user-ranking-content">
               <div v-for="(user, index) in userRanking" :key="index"  class="ranking-item" @click="navigateToEvent(event)">
                 {{ index + 1 }}. {{ user }}
                 <img :src="userImgSrc[index]" :alt="`Image ${index + 1}`">
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               高产用户(原帖)榜
@@ -248,7 +248,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               中国/中共·议题活跃榜
@@ -261,7 +261,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               民进党·议题活跃榜
@@ -274,7 +274,7 @@
               </div>
             </div>
           </div>
-  
+
           <div class="lightContainer">
             <div class="light-ranking-title">
               赖清德·议题活跃榜
@@ -294,14 +294,14 @@
       </div>
     </div>
   </template>
-  
+
   <script>
   import * as echarts from 'echarts'
   import axios from 'axios'
   import graphData from '@/assets/dashboard/les-miserables.json'
   import localUserRanking from '@/assets/dashboard/userRanking.json'
   import localEventRanking from '@/assets/dashboard/eventRanking.json'
-  
+
   export default {
     data() {
       return {
@@ -321,10 +321,10 @@
     async mounted() {
       this.initEventChart()
       this.initUserChart()
-  
+
       await this.fetchUserRanking() // 等待 fetchUserRanking 完成
       await this.fetchEventRanking() // 等待 fetchEventRanking 完成
-  
+
       this.fetchUserImgSrc()
       this.fetchEventImgSrc()
     },
@@ -522,18 +522,18 @@
     }
   }
   </script>
-  
+
   <style scoped>
   .dashboard {
     padding: 10px;
   }
-  
+
   hr {
     background-color: #b3dbf1;
     height: 1px;
     border: none
   }
-  
+
   .searchbar {
     margin-top: 20px;
     display: flex;
@@ -542,29 +542,33 @@
     border: none;
     padding: 0;
   }
-  
+
   .icon-group {
     display: flex;
     gap: 50px;
-    /* Add some space between icons */
+    
+    /* margin-left: 220px;
+    margin-right:50px; */
   }
-  
+
   .icon-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
+    margin-left: 25px;
   }
-  
+
   .icon-item div {
     margin-top: 5px;
     /* Add some space between icon and text */
   }
-  
+
   .LesMiserables {
     margin-bottom: 10px;
   }
-  
+
+
   .date-selectors {
     display: flex;
     gap: 50px;
@@ -572,13 +576,13 @@
     justify-content: center;
     /* Center the date pickers */
   }
-  
+
   .title-with-button {
     display: flex;
     align-items: center;
     margin-left: 10px;
   }
-  
+
   .content-conclusion {
     text-align: center;
     font-family: "Microsoft YaHei", serif;
@@ -587,7 +591,7 @@
     color: deepskyblue;
     margin-top: 30px;
   }
-  
+
   .darkContainer {
     height: 630px;
     width: 350px;
@@ -596,12 +600,12 @@
     /* 浅蓝色背景 */
     transform: skew(0, 10deg);
     /* 使容器变成平行四边形 */
-    padding: 20px;
-    margin: 30px 20px 20px 30px;
+    padding: 5px;
+    margin: 10px 20px 20px 10px;
     position: relative;
     /* 为容器内的绝对定位元素提供参照 */
   }
-  
+
   .lightContainer {
     height: 630px;
     width: 350px;
@@ -611,26 +615,27 @@
     transform: skew(0, 10deg);
     /* 使容器变成平行四边形 */
     padding: 20px;
-    margin: 30px 20px 20px 30px;
+    margin: 10px 20px 20px 10px;
   }
-  
+
   .container-wrapper {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
   }
-  
+
   .ranking-title {
     font-family: "Microsoft YaHei", serif;
     color: white;
     font-weight: bold;
     font-size: 20px;
     transform: skew(0, -10deg);
+    margin-top:15px;
   }
-  
+
   .ranking-content div {
     margin-top: 22px;
-    font-size: 22px;
+    font-size: 18px;
     color: white;
     /* 标题颜色 */
     transform: skew(0, -10deg);
@@ -643,17 +648,32 @@
     position: relative;
     /* 相对定位，为子元素的绝对定位提供参照 */
   }
-  
+
+  .user-ranking-content div {
+    margin-top: 22px;
+    font-size: 20px;
+    color: white;
+    /* 标题颜色 */
+    transform: skew(0, -10deg);
+    justify-content: space-between;
+    /* 使文本校正回正 */
+    align-items: center;
+    display: flex;
+    margin-left:8px;
+    line-height: 25px;
+    /* 固定行高，使其与字体大小一致 */
+    position: relative;
+    /* 相对定位，为子元素的绝对定位提供参照 */
+  }
+
   .ranking-content img {
-    height: 48px;
+    height: 32px;
     /* 设置与字体大小相同的高度 */
-    width: 48px;
+    width: 32px;
     /* 根据图片比例自动调整宽度 */
-    margin-left: 10px;
     /* 图片和文字之间的间距 */
-    margin-top: 1px;
     /* 图片的上下间距为 1px */
-    margin-bottom: 1px;
+    margin: 0 -3px 1px 10px;
     /* 图片的上下间距为 1px */
     vertical-align: middle;
     /* 使图片与文字基线对齐 */
@@ -662,7 +682,25 @@
     right: 0;
     /* 图片贴着容器右端 */
   }
-  
+
+  .user-ranking-content img {
+    height: 40px;
+    /* 设置与字体大小相同的高度 */
+    width: 40px;
+    border-radius: 100%;
+    /* 根据图片比例自动调整宽度 */
+    /* 图片和文字之间的间距 */
+    /* 图片的上下间距为 1px */
+    margin: 1px -3px 1px 10px;
+    /* 图片的上下间距为 1px */
+    vertical-align: middle;
+    /* 使图片与文字基线对齐 */
+    position: absolute;
+    /* 绝对定位，固定图片位置 */
+    right: 0;
+    /* 图片贴着容器右端 */
+  }
+
   .light-ranking-title {
     font-family: "Microsoft YaHei", serif;
     color: deepskyblue;
@@ -670,24 +708,31 @@
     font-size: 20px;
     transform: skew(0, -10deg);
   }
-  
+
   .light-ranking-content div {
     margin-top: 22px;
-    font-size: 22px;
+    font-size: 18px;
     color: rgb(0,32,96);
     /* 标题颜色 */
     transform: skew(0, -10deg);
     /* 使文本校正回正 */
   }
 
+  .el-date-picker /deep/ .el-input__inner {
+    height:60px;
+    border: 1px solid rgb(121, 121, 121);
+    margin-left:0;
+    border-radius:0;
+    font-size:20px;
+  }
+
   .ranking-item {
     cursor: pointer;
     transition: color 0.2s ease-in-out;
-}
+  }
 
-.ranking-item:hover {
-    color: blue;
-    text-decoration: underline;
-}
+  .ranking-item:hover {
+      color: blue;
+      text-decoration: underline;
+  }
   </style>
-  

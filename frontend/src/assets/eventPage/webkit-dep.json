@@ -2,27 +2,27 @@
   "type": "force",
   "categories": [
     {
-      "name": "HTMLElement",
+      "name": "民进党执政不力",
       "keyword": {},
-      "base": "HTMLElement"
+      "base": "民进党执政不力"
     },
     {
-      "name": "WebGL",
+      "name": "民进党滥用公权",
       "keyword": {},
-      "base": "WebGLRenderingContext"
+      "base": "民进党滥用公权"
     },
     {
-      "name": "SVG",
+      "name": "民进党黑金政治",
       "keyword": {},
-      "base": "SVGElement"
+      "base": "民进党黑金政治"
     },
     {
-      "name": "CSS",
+      "name": "国民党",
       "keyword": {},
-      "base": "CSSRule"
+      "base": "国民党"
     },
     {
-      "name": "Other",
+      "name": "其他",
       "keyword": {}
     }
   ],
@@ -713,7 +713,7 @@
       "category": 0
     },
     {
-      "name": "HTMLElement",
+      "name": "民进党执政不力",
       "value": 3,
       "category": 0
     },
