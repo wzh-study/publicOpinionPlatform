@@ -58,13 +58,13 @@
       <div v-if="showSpreadingInfo">
         <div class="centered-select">
           <el-select
-            v-model="eventinfo_selected"
+            v-model="eventinfo_selected.content"
             placeholder="请选择"
             @change="fetchEventData"
             class="custom-select"
           >
             <el-option
-              v-for="event in events"
+              v-for="event in events.content"
               :key="event"
               :label="event"
               :value="event"
@@ -107,550 +107,609 @@
       </div>
       <hr>
   
-      <!-- <div class="LesMiserables">
-        <div class="title-with-button">
-          <el-switch v-model="showUserInfo" @change="toggleChart" style="transform: scale(1.25); "/>
-          <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">舆情事件分析——关键用户</h2>
+      <div class="LesMiserables">
+          <div class="title-with-button">
+            <el-switch v-model="showUserInfo" @change="toggleChart" />
+            <h3 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:10px">舆情事件分析——关键用户</h3>
+          </div>
         </div>
-      </div>
-      <div v-if="showUserInfo">
-        <div class="centered-select">
-          <el-select
-            v-model="eventinfo_selected"
-            placeholder="请选择"
-            @change="fetchEventData"
-            class="custom-select"
-          >
-            <el-option
-              v-for="event in events"
-              :key="event"
-              :label="event"
-              :value="event"
-            />
-          </el-select>
-        </div>
-        <div class="content-conclusion">
-          [E.1] 基于传播
-        </div>
-        <div>
-          <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
-            <el-col :span="3" >
-              <div class="sub-title">大V用户（出度）</div>
-
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
+        <div v-if="showUserInfo">
+          <div class="centered-select">
+            <el-select
+              v-model="eventinfo_selected.content"
+              placeholder="请选择"
+              @change="fetchEventData"
+              class="custom-select"
+            >
+              <el-option
+                v-for="event in events.content"
+                :key="event"
+                :label="event"
+                :value="event"
+              />
+            </el-select>
+          </div>
+          <div class="content-conclusion">
+            [E.1] 基于传播
+          </div>
+          <div>
+            <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+              <el-col :span="3" >
+                <div class="sub-title">大V用户（出度）</div>
+  
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content.content"></el-avatar>
+                  </div>
+                  
                 </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
                 </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
                 </div>
-                
+              </el-col>
+              
+              
+              <el-col :span="3">
+                <div class="sub-title">大V用户（高阶互动）</div>
+  
+                <div class="demo-basic--circle" style="display: flex ;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col>  
+  
+  
+              <el-col :span="3">
+                <div class="sub-title" >&nbsp;&nbsp;&nbsp;&nbsp;桥梁用户</div>
+  
+                <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col>
+              
+              <el-col :span="3">
+                <div class="sub-title" >疑似水军用户（入度）</div>
+  
+                <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col> 
+  
+  
+              <el-col :span="3">
+                <div class="sub-title" >疑似水军用户（共互动）</div>
+  
+                <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col> 
+              
+              
+            </el-row>
+          </div>
+  
+          <div class="content-conclusion">
+            [E.2] 基于内容
+          </div>
+          <div>
+            <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+              <el-col :span="3" >
+                <div class="sub-title">高产用户（原贴）</div>     
+  
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col>
+              
+              
+              <el-col :span="3">
+                <div class="sub-title">高产用户（转贴）</div>
+  
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col>  
+  
+  
+              <el-col :span="3">
+                <div class="sub-title" >高产用户（评论）</div>
+  
+                <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col>
+              
+              <el-col :span="3">
+                <div class="sub-title" >敌意言论</div>
+  
+                <div class="demo-basic--circle" style="display: flex ;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col> 
+  
+  
+              <el-col :span="3">
+                <div class="sub-title" >激情情绪用户</div>
+  
+                <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+                <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                  
+                  <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                    <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                  </div>
+                  
+                </div>
+              </el-col> 
+              
+              
+            </el-row>
+          </div>
+  
+          <el-row :gutter="50">
+            
+            <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="10">
+              <div >
+                <el-col :span="13">
+                      
+                </el-col> 
+                <div class="content-conclusion">
+                  [E.3] 算法
+                </div>
+                <div>
+                  <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+                    <el-col :span="13">
+                      
+                    </el-col> 
+                    <el-col :span="7">
+                      <div class="sub-title" >PageRank</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+  
+  
+                    <el-col :span="8">
+                      <div class="sub-title" >HITS</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+                    
+                  </el-row>
+                  <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+                    <el-col :span="13">
+                      
+                    </el-col> 
+                    <el-col :span="7">
+                      <div class="sub-title" >Info Index</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+  
+  
+                    <el-col :span="8">
+                      <div class="sub-title" >Coreness</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+                    
+                  </el-row>
+  
+                  <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+                    <el-col :span="13">
+                      
+                    </el-col> 
+                    <el-col :span="7">
+                      <div class="sub-title" >Eigenvector Centrality</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+  
+  
+                    <el-col :span="8">
+                      <div class="sub-title" >Katz Centrality</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+                    
+                  </el-row>
+  
+                  <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
+                    <el-col :span="13">
+                      
+                    </el-col> 
+                    <el-col :span="7">
+                      <div class="sub-title" >Degree Centrality</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+  
+  
+                    <el-col :span="8">
+                      <div class="sub-title" >疑似水军用户（共互动）</div>
+  
+                      <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                      <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                        
+                        <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
+                          <el-avatar :size="medium" :src="circleUrl.content.content"></el-avatar>
+                        </div>
+                        
+                      </div>
+                    </el-col> 
+                    
+                  </el-row>
+                </div>
               </div>
             </el-col>
-            
-            
-            <el-col :span="3">
-              <div class="sub-title">大V用户（高阶互动）</div>
-
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+  
+  
+            <el-col :xs="4" :sm="6" :md="8" :lg="9" :xl="10">
+              <div >
+                <table class="sentiment-table" style="width: 500px;margin:30px auto;">
+                <tr class="header-row">
+                  <td colspan="3">原贴个数</td>
+                  <td colspan="3">转帖个数</td>
+                  <td colspan="3">被转次数</td>
+                  <td colspan="3">被评次数</td>
+                  <td colspan="3">被赞次数</td>
+                </tr>
+                <tr class="content-row">
+                  <td colspan="3" height="40px">  </td>
+                  <td colspan="3" height="40px">  </td>
+                  <td colspan="3" height="40px">  </td>
+                  <td colspan="3" height="40px">  </td>
+                  <td colspan="3" height="40px">  </td>
+                </tr>
                 
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
+              </table>
+              <div class="content-conclusion">用户参与事件概况</div>
+  
+              <table class="sentiment-table" style="width: 500px;margin:30px auto;">
+                <tr class="header-row">
+                  <td colspan="3">排名</td>
+                  <td colspan="12">高频传播内容</td>
                 
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
+                </tr>
+                <tr class="content-row">
+                  <td colspan="3" height="40px">2024-07-01</td>
+                  <td colspan="12" height="40px"> 他们会这样做，然后却没有采取任何措施来保护在西菲律宾海受到骚扰的渔民💀；同意 BA KAYO，芭比粉丝？参议员们正在呼吁禁令即将上映的《芭比娃娃》电影中，有一段场景据称展示了中国对九段线的主权主张，这引起了争议。 </td>
+                 
+                </tr>
                 
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col>  
-
-
-            <el-col :span="3">
-              <div class="sub-title" >&nbsp;&nbsp;&nbsp;&nbsp;桥梁用户</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
+              </table>
+              <div class="content-conclusion">用户参与事件内容</div>
+                <div id="spreading-chart" style="width:400px;height:400px;margin:30px auto" />
               </div>
             </el-col>
-            
-            <el-col :span="3">
-              <div class="sub-title" >疑似水军用户</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col> 
-
-
-            <el-col :span="3">
-              <div class="sub-title" >疑似水军用户（共互动）</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col> 
-            
-            
+           
           </el-row>
-        </div>
-        <div class="content-conclusion">
-          [E.2] 基于内容
-        </div>
-        <div>
-          <el-row class="demo-avatar demo-basic" style="display: flex;" type="flex" justify="center">
-            <el-col :span="3" >
-              <div class="sub-title">大V用户（出度）</div>     
-
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col>
-            
-            
-            <el-col :span="3">
-              <div class="sub-title">大V用户（高阶互动）</div>
-
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col>  
-
-
-            <el-col :span="3">
-              <div class="sub-title" >&nbsp;&nbsp;&nbsp;&nbsp;桥梁用户</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col>
-            
-            <el-col :span="3">
-              <div class="sub-title" >疑似水军用户</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col> 
-
-
-            <el-col :span="3">
-              <div class="sub-title" >疑似水军用户（共互动）</div>
-
-              <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-              <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                
-                <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                  <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                </div>
-                
-              </div>
-            </el-col> 
-            
-            
-          </el-row>
-        </div>
-
-
-        <div>
-          <el-row>
-            <el-col >
-              <div>
-                <p class="content-conclusion2">[E.3] 基于算法</p>
-              <el-row>
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-
-
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-
-
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col><el-col :span="3">
-                  <div class="sub-title" >疑似水军用户</div>
-
-                  <div class="demo-basic--circle" style="display:flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                  <div class="demo-basic--circle" style="display: flex;flex-wrap: wrap;">
-                    
-                    <div class="block" v-for="size in sizeList" :key="size" style="margin-right: 5px;text-align: center;m">
-                      <el-avatar :size="medium" :src="circleUrl"></el-avatar>
-                    </div>
-                    
-                  </div>
-                </el-col>
-              </el-row>
-              </div>
-                
-
-            </el-col>
-
-            <el-col>
-
-            </el-col>
-          </el-row>
-        </div>
-
-
+  
+  
+  
         
-
-
-        <div id="spreading-chart" style="width:400px;height:400px;margin:30px auto" />
+       
       </div>
-      <hr> -->
+      <hr>
   
       <div class="title-with-button">
         <el-switch v-model="showContentInfo" @change="toggleChart" style="transform: scale(1.25); "/>
@@ -659,20 +718,20 @@
       <div v-if="showContentInfo">
         <div class="centered-select">
           <el-select
-            v-model="eventinfo_selected"
+            v-model="eventinfo_selected.content"
             placeholder="请选择"
             @change="fetchEventData"
             class="custom-select"
           >
             <el-option
-              v-for="event in events"
+              v-for="event in events.content"
               :key="event"
               :label="event"
               :value="event"
             />
           </el-select>
         </div>
-        <el-table :data="tableData" border style="width: 950px;margin:30px auto;" :row-class-name="getRowClassName">
+        <el-table :data="tableDataWithTime.content" border style="width: 950px;margin:30px auto;" :row-class-name="getRowClassName">
           <el-table-column prop="ranking1" label="排名" width="50px" />
           <el-table-column prop="ranking2" label="排名*" width="50px" />
           <el-table-column prop="content" label="高频传播内容" width="810px" />
@@ -681,6 +740,11 @@
         <div class="content-conclusion">
           [F] 高频传播内容
         </div>
+  
+  
+        <div ref="chart4" style="width: 800px;height:600px;"></div>
+  
+  
         <div class="cloudMap">
           [G.1] 高频词云图
         </div>
@@ -774,13 +838,13 @@
       <div v-if="showSentimentInfo">
         <div class="centered-select">
           <el-select
-            v-model="eventinfo_selected"
+            v-model="eventinfo_selected.content"
             placeholder="请选择"
             @change="fetchEventData"
             class="custom-select"
           >
             <el-option
-              v-for="event in events"
+              v-for="event in events.content"
               :key="event"
               :label="event"
               :value="event"
@@ -882,43 +946,65 @@
   import localEventTree from '@/assets/eventPage/flare.json'
   import localPointChart from '@/assets/eventPage/les-miserables.json'
   import webkitDep from '@/assets/eventPage/webkit-dep.json'
+  import "echarts-wordcloud/dist/echarts-wordcloud";
+  import "echarts-wordcloud/dist/echarts-wordcloud.min";
+  
   
   export default {
     data() {
       return {
-        tableData: [
-          {
-            ranking1: '1',
-            ranking2: '1',
-            content: '加油！愿你平安喜乐，万事如意！在西菲律宾海！！！',
-          },
-          {
-            ranking1: '2',
-            ranking2: '2',
-            content: '他们会这样做，然后却没有采取任何措施来保护在西菲律宾海受到骚扰的渔民💀；同意 BA KAYO，芭比粉丝？参议员们正在呼吁禁令即将上映的《芭比娃娃》电影中，有一段场景据称展示了中国对九段线的主权主张，这引起了争议。'
-          },
-          {
-            ranking1: '3',
-            ranking2: '3',
-            content: '中国不仅在破坏西菲律宾海的生物多样性，还在破坏整个南海。多年来，我们我见过他们过度开采濒临灭绝的巨蛤，建造破坏珊瑚的岛屿，',
-          },
-          {
-            ranking1: '4',
-            ranking2: '4',
-            content: '但是那些穿着“西菲律宾海”衬衫但在 2016-2022 年期间却一动不动的人，真是可笑？'
-          },
-          {
-            ranking1: '5',
-            ranking2: '5',
-            content: '中国不仅非法宣称对西菲律宾海拥有主权，而且越南、马来西亚、印度尼西亚和东南亚其他地区的专属经济区！ 中国海岸警卫队在马来西亚的专属经济区内，一群马来西亚人在 Terumbu Sahap 附近捕鱼',
-          },
-        ],
-        chartInstance: null,
-        eventinfo_selected: '民进党执政不力',
-        flareData: [],
+        startDate: '2021-01-01',
+        endDate: '2021-12-31',
+        tableDataWithTime:{
+          content:[
+            {
+              ranking1: '1',
+              ranking2: '1',
+              content: '加油！愿你平安喜乐，万事如意！在西菲律宾海！！！',
+            },
+            {
+              ranking1: '2',
+              ranking2: '2',
+              content: '他们会这样做，然后却没有采取任何措施来保护在西菲律宾海受到骚扰的渔民💀；同意 BA KAYO，芭比粉丝？参议员们正在呼吁禁令即将上映的《芭比娃娃》电影中，有一段场景据称展示了中国对九段线的主权主张，这引起了争议。'
+            },
+            {
+              ranking1: '3',
+              ranking2: '3',
+              content: '中国不仅在破坏西菲律宾海的生物多样性，还在破坏整个南海。多年来，我们我见过他们过度开采濒临灭绝的巨蛤，建造破坏珊瑚的岛屿，',
+            },
+            {
+              ranking1: '4',
+              ranking2: '4',
+              content: '但是那些穿着“西菲律宾海”衬衫但在 2016-2022 年期间却一动不动的人，真是可笑？'
+            },
+            {
+              ranking1: '5',
+              ranking2: '5',
+              content: '中国不仅非法宣称对西菲律宾海拥有主权，而且越南、马来西亚、印度尼西亚和东南亚其他地区的专属经济区！ 中国海岸警卫队在马来西亚的专属经济区内，一群马来西亚人在 Terumbu Sahap 附近捕鱼',
+            },
+          ],
+        time:2024-9-9
+        },
+        chartInstanceWithTime: {
+          content: null,
+          time: 2024-9-9
+        },
+        eventinfo_selected:{
+          content:'民进党执政不力',
+  
+          time:2024-9-9
+        },
+        flareData:{
+          content:null,
+          time:2024-9-9
+        },
         nodes:[],
         links:[],
-        events:['民进党滥用公权力','民进党黑金政治','民进党执政不力'],
+        events:{
+          content:['民进党滥用公权力','民进党黑金政治','民进党执政不力'],
+          time:2024-9-9
+        },
+        
         showEventTree:true,
         showSpreadingInfo:true,
         showUserInfo:true,
@@ -926,8 +1012,11 @@
         showSentimentInfo:true,
         showContrastInfo:true,
         showEvolutionInfo:true,
-        circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
         
+        circleUrl:{
+          content: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+          time: 2024-9-9
+        },
         sizeList: ["large", "medium", "small"],
         sizeList2: ["medium"]
       }
@@ -942,6 +1031,7 @@
       this.initSentimentChart()
       this.initContrastChart()
       this.initSpreadingChart()
+      this.showWordCloudWithHighFrequencyWords()
     },
     methods: {
       getRowClassName({ row, rowIndex }) {
@@ -968,7 +1058,7 @@
           })
           .finally(() => {
             // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('overview'));
+            this.chartInstanceWithTime.content = echarts.init(document.getElementById('overview'));
             const option = {
               legend: {
                 data: ['民进党执政不力', '民进党滥用公权', '民进党黑金政治', '国民党', '其他']
@@ -997,7 +1087,7 @@
                 }
               ]
             };
-            this.chartInstance.setOption(option);
+            this.chartInstanceWithTime.content.setOption(option);
           });
       },
       initSpreadingChart() {
@@ -1017,7 +1107,7 @@
           })
           .finally(() => {
             // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('spreading-chart'));
+            this.chartInstanceWithTime.content = echarts.init(document.getElementById('spreading-chart'));
             const option = {
               legend: {
                 data: ['民进党执政不力', '民进党滥用公权', '民进党黑金政治', '国民党', 'Other']
@@ -1046,7 +1136,7 @@
                 }
               ]
             };
-            this.chartInstance.setOption(option);
+            this.chartInstanceWithTime.content.setOption(option);
           });
       },
   
@@ -1207,24 +1297,24 @@
         const self = this;
         axios.get('https://localhost:8080/event-tree')
           .then(response => {
-            self.flareData = response.data;
-            addDepthInfo(self.flareData); // 为每个节点添加depth信息
+            self.flareData.content = response.data;
+            addDepthInfo(self.flareData.content); // 为每个节点添加depth信息
           })
           .catch(error => {
             console.log('Error fetching event tree data from backend, using local data instead:', error);
             if (localEventTree) {
-              self.flareData = localEventTree;
-              addDepthInfo(self.flareData); // 为本地数据添加depth信息
+              self.flareData.content = localEventTree;
+              addDepthInfo(self.flareData.content); // 为本地数据添加depth信息
             } else {
               console.log('Local event tree data is undefined.');
             }
           })
           .finally(() => {
-            if (self.flareData) {
+            if (self.flareData.content) {
               const chartElement = document.getElementById('event-tree');
               chartElement.style.height = `${window.innerWidth * 0.5}px`;
   
-              self.chartInstance = echarts.init(chartElement);
+              self.chartInstanceWithTime.content= echarts.init(chartElement);
               const option = {
                 tooltip: {
                   trigger: 'item',
@@ -1233,7 +1323,7 @@
                 series: [
                   {
                     type: 'tree',
-                    data: [self.flareData],
+                    data: [self.flareData.content],
                     left: '2%',
                     right: '2%',
                     top: '8%',
@@ -1280,11 +1370,11 @@
                   }
                 ]
               };
-              self.chartInstance.setOption(option);
+              self.chartInstanceWithTime.content.setOption(option);
   
               window.addEventListener('resize', () => {
                 chartElement.style.height = `${window.innerWidth * 0.5}px`;
-                self.chartInstance.resize();
+                self.chartInstanceWithTime.content.resize();
               });
             } else {
               console.log('No data available to display the chart.');
@@ -1308,7 +1398,7 @@
           })
           .finally(() => {
             // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('point-chart'))
+            this.chartInstanceWithTime.content = echarts.init(document.getElementById('point-chart'))
             const option = {
               tooltip: {},
               legend: [
@@ -1343,7 +1433,7 @@
                 }
               ]
             }
-            this.chartInstance.setOption(option)
+            this.chartInstanceWithTime.content.setOption(option)
           })
       },
       initPointPieChart() {
@@ -1566,6 +1656,95 @@
           }
           if (this.showContrastInfo) this.initContrastChart()
         })
+      },
+      showWordCloudWithHighFrequencyWords(){
+        var chart4 = echarts.init(this.$refs.chart4);
+        var data4 = [
+             {'name': '香港', 'value': 118},
+             {'name': '台湾', 'value': 89},
+             {'name': '上海', 'value': 56},
+             {'name': '广东', 'value': 51},
+             {'name': '云南', 'value': 46},
+             {'name': '四川', 'value': 30},
+             {'name': '福建', 'value': 25},
+             {'name': '浙江', 'value': 22},
+             {'name': '海南', 'value': 17},
+             {'name': '江苏', 'value': 8},
+             {'name': '天津', 'value': 7},
+             {'name': '山西', 'value': 7},
+             {'name': '广西', 'value': 7},
+             {'name': '陕西', 'value': 6},
+             {'name': '湖北', 'value': 6},
+             {'name': '重庆', 'value': 6},
+             {'name': '内蒙古', 'value': 4},
+             {'name': '湖南', 'value': 4},
+             {'name': '山东', 'value': 3},
+             {'name': '北京', 'value': 2},
+             {'name': '河南', 'value': 1},
+             {'name': '甘肃', 'value': 1},
+             {'name': '西藏', 'value': 0},
+             {'name': '吉林', 'value': 0},
+             {'name': '河北', 'value': 0},
+             {'name': '青海', 'value': 0},
+             {'name': '澳门', 'value': 0},
+             {'name': '新疆', 'value': 10},
+             {'name': '辽宁', 'value': 0},
+             {'name': '安徽', 'value': 0},
+             {'name': '黑龙江', 'value': 0},
+             {'name': '贵州', 'value': 0},
+             {'name': '江西', 'value': 0},
+             {'name': '宁夏', 'value': 0}
+             ];
+  
+             var chart4Option = {
+              title: {
+                  // text: '各市现有确诊-词云',//标题
+                  x: 'center',
+                  textStyle: {
+                      fontSize: 23
+                  }
+     
+              },
+              backgroundColor: '#fff',
+              tooltip: {
+                  show: true
+              },
+              series: [
+                  {
+                      name: '各市现有确诊',//数据提示窗标题
+                      type: 'wordCloud',
+                      sizeRange: [12, 64],//画布范围，如果设置太大会出现少词（溢出屏幕）
+                      rotationRange: [-45, 90],//数据翻转范围
+                      //shape: 'circle',
+                      textPadding: 0,
+                      autoSize: {
+                          enable: true,
+                          minSize: 6
+                      },
+                      textStyle: {
+                          normal: {
+                              color: function() {
+                                  console.log('rgb(' + [
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160)
+                                  ].join(',') + ')')
+                                  return 'rgb(' + [
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160),
+                                      Math.round(Math.random() * 160)
+                                  ].join(',') + ')';
+                              }
+                          },
+                          emphasis: {
+                              shadowBlur: 10,
+                              shadowColor: '#333'
+                          }
+                      },
+                  data: data4,
+              }]
+          };
+          chart4.setOption(chart4Option);
       }
     }
   }
@@ -1587,7 +1766,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-  
   }
   
   .searchbar {

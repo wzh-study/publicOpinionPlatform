@@ -133,7 +133,7 @@
               border
               :header-cell-style="{
                 'background-color': 'rgb(255, 240, 245)',
-                color: 'rgb(105,105,105)',  
+                color: 'rgb(105,105,105)',
                 'font-weight': 'normal', /* 取消加粗 */
                 height: '20px'
               }"
@@ -302,9 +302,9 @@
                   height: '100%', // 确保右侧内容也填充高度
                 }"
               >
-                <div class="chart-or-content-div" :style="{ marginTop: '0px', height: 'calc(100% - 60px)' }">
+                <div class="chart-or-content-div" :style="{ marginTop: '0px', height: 'calc(100% - 100px)' }">
                   <!-- 减去marginTop的高度 -->
-                  <el-table :data="displayData" style="width: 70%" :cell-style="initTableCellStyle">
+                  <el-table :data="displayData" style="width: 85%" :cell-style="initTableCellStyle">
                     <el-table-column v-for="(item, index) in displayData[0]" :key="index" align="center">
                       <template slot-scope="scope">
                         <span>{{ scope.row[index] }}</span>
@@ -371,7 +371,7 @@
       </div>
       <hr>
       <!-- -------------------------------------------------------------------------------------------------- -->
-      <!-- CH6 群组参与舆情   TODO：残次品，需要大修改- -->
+      <!-- CH6 群组参与舆情 - -->
       <!-- -------------------------------------------------------------------------------------------------- -->
       <div class="GroupPublicSentiment">
         <div class="title-with-button">
@@ -386,11 +386,11 @@
           <!-- 头像区域 -->
           <div style="display: flex; justify-content: center; margin-bottom: 20px;">
             <el-avatar
-              v-for="(user, index) in BigVImgUrlList"
+              v-for="(user, index) in bigVImgUrlList"
               :key="index"
               :src="user"
               :size="65"
-              :style="index !== BigVImgUrlList.length - 1 ? { 'margin-right': '10px' } : {}"
+              :style="index !== bigVImgUrlList.length - 1 ? { 'margin-right': '10px' } : {}"
             />
           </div>
   
@@ -402,65 +402,51 @@
   
           <!-- 底部区域（待定） -->
           <div class="custom-timeline">
-            <div
-              v-for="(item, index) in groupParticipationTimeline"
-              :key="index"
-              style="display: flex; align-items: center; position: relative; margin-bottom: 100px;"
-            > <!-- 增大节点间隔 -->
-              <!-- 时间轴连线（仅非首个节点显示） -->
+            <div class="timelineContainer">
+              <div class="itemContainer flex titleContainer">
+                <div class="leftContainer flex" />
+                <div class="exceptLeft">
+                  <div class=" middleContainer1 headerContainer">
+                    <div class="title">主要观点</div>
+                  </div>
+                  <div class="rightContainer" />
+                </div>
+              </div>
               <div
-                v-if="index !== 0"
-                style="border-left: 10px solid rgb(0,157,255); height: 220px; position: absolute; left: 46%; transform: translateX(-70%);margin-bottom: 260px;"
-              />
-  
-              <!-- 节点内容包裹 -->
-              <div style="display: flex; align-items: center;">
-                <!-- 左侧图片区域 -->
-                <div style="display: flex; flex-wrap: wrap;">
-                  <div
-                    v-for="(img, imgIndex) in item.images"
-                    :key="imgIndex"
-                    style="position: relative; margin: 20px; margin-top: 50px;"
-                  >
-                    <img
-                      :src="img.src"
-                      :alt="img.title"
-                      style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;"
-                    >
-                    <div
-                      style="position: absolute; bottom: 85px; left: 0; width: 100%; text-align: center; color: gray; padding: 3px 0;  
-                  display: -webkit-box; /* 将元素设为伸缩盒模型显示 */
-                  -webkit-line-clamp: 2; /* 限制在一个块元素显示的文本的行数 */
-                  -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */ 
-                  overflow: hidden; /* 隐藏超出的内容 */
-                  text-overflow: ellipsis;"
-                    >
-                      {{ img.title }}</div>
+                v-for="(item, index) in timeLineData.list"
+                :key="item.id"
+                class="itemContainer flex"
+                :class="{ first: index === 0 }"
+              >
+                <div class="leftContainer flex">
+                  <!-- 左侧的图片和图片标题 -->
+                  <div v-for="leftItem in item.leftContent" :key="leftItem.id" class="leftItem">
+                    <div v-for="t in leftItem.title" :key="t" class="l-tit">{{ t }}</div>
+                    <img :src="leftItem.img" class="l-img">
                   </div>
                 </div>
-  
-                <!-- 中间日期圆圈 -->
-                <div
-                  style="width: 55px; height: 55px; border-radius: 50%; background-color: rgb(0,157,255); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;"
-                >
-                  {{ item.date }}</div>
-  
-                <!-- 右侧文本区域 -->
-                <div style="display: flex; flex-direction: column;">
-                  <div
-                    v-for="(text, textIndex) in item.texts"
-                    :key="textIndex"
-                    style="margin-bottom: 15px; list-style-type: none; margin-left: 20px;color: gray;"
-                  >
-                    <i class="el-icon-circle-check" style="margin-right: 5px;" />{{ text }}
+                <!-- 中间的圆圈和右边的列表 -->
+                <div class="exceptLeft">
+                  <div class="middleContainer">
+                    <div class="circle">{{ item.date }}</div>
+                  </div>
+                  <div class="rightContainer">
+                    <div v-for="(rightItem, rIndex) in item.rightContent" :key="rIndex">
+                      <div class="flex">
+                        <div class="r-index">{{ rIndex + 1 }}</div>
+                        <div class="r-content">
+                          <div v-for="rTxt in rightItem" :key="rTxt" class="r-txt">{{ rTxt }}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <hr>
         </div>
       </div>
-      <hr>
     </div>
   </template>
   
@@ -476,12 +462,12 @@
       return {
         // 全局变量
         chartInstance: null, // 大部分图表实例对象
-        showCh1: true,  
-        showCh2: true,  
-        showCh3: true,  
-        showCh4: true,  
-        showCh5: true,  
-        showCh6: true,  
+        showCh1: true,
+        showCh2: true,
+        showCh3: true,
+        showCh4: true,
+        showCh5: true,
+        showCh6: true,
         // ===============================
         // CH0 顶栏
         startDate: '',
@@ -502,7 +488,7 @@
         hostileSpeechData: [],
         // ===============================
         // CH4 群组发现
-        groupDiscoveryRadio: '基于社交关系的群组发现', // 初始化选中的标签
+        groupDiscoveryRadio: '基于社交关系的群组发现',
         groupDiscoveryRadioList: ['基于社交关系的群组发现', '基于（共）互动行为的群组发现', '基于相似语义的群组发现'],
         // 语义化的数据存储
         groupDiscoveryData: {},
@@ -514,11 +500,13 @@
         mainPointsAndOriginalText: [],
         // ===============================
         // CH6 群组参与舆情
-        BigVImgUrlList: [],
-        groupParticipationTimeline: []
+        bigVImgUrlList: [],
+        timeLineData: {}
       }
     },
     computed: {
+      // ===============================
+      // CH4 群组发现
       displayData() {
         // 首先构造一个包含表头信息的数组
         const headerRow = [' '].concat(this.groupStatisticTableHeader);
@@ -539,63 +527,8 @@
       }
     },
     methods: {
-      // ------------------------------------------------------------
-      // 图表数据请求
-      initChordChart() {
-        axios.get('http://localhost:8080/group-chord-data')
-          .then(response => {
-            // 使用后端返回的数据
-            this.groupChordData = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching group chord data from backend, using local data instead:', error)
-            // 使用本地数据
-            this.groupChordData = GraphData
-          })
-          .finally(() => {
-            // 群组语义----和弦关系图 
-            this.chartInstance = echarts.init(this.$refs.groupChordContainer);
-            const option = {
-              title: {
-                top: 'bottom',
-                left: 'right'
-              },
-              tooltip: {},
-              animationDuration: 1500,
-              animationEasingUpdate: 'quinticInOut',
-              series: [
-                {
-                  name: 'Connections',
-                  type: 'graph',
-                  layout: 'circular',
-                  circular: {
-                    rotateLabel: true
-                  },
-                  data: this.groupChordData.nodes,
-                  links: this.groupChordData.links,
-                  categories: this.groupChordData.categories,
-                  roam: true,
-                  label: {
-                    position: 'right',
-                    formatter: '{b}'
-                  },
-                  lineStyle: {
-                    color: 'source',
-                    curveness: 0.3,
-                    width: 1 // 保持线的宽度，确保其清晰度
-                  },
-                  emphasis: {
-                    focus: 'adjacency',
-                    lineStyle: {
-                      width: 10 // 鼠标悬停时线的宽度
-                    }
-                  }
-                }
-              ]
-            }
-            this.chartInstance.setOption(option)
-          })
-      },
+      // ===============================
+      // CH2 敌意用户关联--网状关系图
       initNetChart() {
         axios.get('http://localhost:8080/hostile-association-net-data')
           .then(response => {
@@ -644,6 +577,7 @@
             communicationRelationsScatter.setOption(this.communicationRelationsOptions);
           })
       },
+      // CH2 敌意用户关联--组件 
       createOptionForHostileAssociation(data, optionName) {
         this[optionName] = {
           series: {
@@ -664,6 +598,8 @@
           }
         };
       },
+      // ===============================
+      // CH3 敌意言论--散点图
       initScatterChart() {
         axios.get('http://localhost:8080/hostile-speech-scatter-data')
           .then(response => {
@@ -740,7 +676,7 @@
             console.warn('未识别的标签选项');
         }
       },
-      // 001 基于社交关系的群组发现
+      // CH4 群组发现--组件--基于社交关系的群组发现
       initSocialForceLayoutChart() {
         axios.get('http://localhost:8080/Social-Relationships-data')
           .then(response => {
@@ -794,7 +730,8 @@
             this.chartInstance.setOption(option)
           })
       },
-      // 002 基于（共）互动行为的群组发现
+  
+      // CH4 群组发现--组件--基于（共）互动行为的群组发现
       initInteractionForceLayoutChart() {
         axios.get('http://localhost:8080/Interaction-data')
           .then(response => {
@@ -837,7 +774,7 @@
             this.chartInstance.setOption(option)
           })
       },
-      // 003 基于相似语义的群组发现
+      // CH4 群组发现--组件--基于相似语义的群组发现
       initSemanticForceLayoutChart() {
         axios.get('http://localhost:8080/Semantic-data')
           .then(response => {
@@ -880,11 +817,11 @@
             this.chartInstance.setOption(option)
           })
       },
-      // 004 添加一个方法来定义单元格样式，确保所有边框都能显示
+      // CH4 群组发现--组件
       initTableCellStyle({ row, rowIndex, column, columnIndex }) {
         const style = {
           border: '1px solid #ccc',
-          padding: '8px',
+          padding: '6px',
           textAlign: 'center'
         };
         if (rowIndex !== 0 && columnIndex !== 0) {
@@ -901,15 +838,76 @@
   
         return style;
       },
+      // ===============================
+      // CH5 群组语义--和弦关系图 
+      initChordChart() {
+        axios.get('http://localhost:8080/group-chord-data')
+          .then(response => {
+            // 使用后端返回的数据
+            this.groupChordData = response.data
+          })
+          .catch(error => {
+            console.error('Error fetching group chord data from backend, using local data instead:', error)
+            // 使用本地数据
+            this.groupChordData = GraphData
+          })
+          .finally(() => {
+            // 群组语义----和弦关系图 
+            this.chartInstance = echarts.init(this.$refs.groupChordContainer);
+            const option = {
+              title: {
+                top: 'bottom',
+                left: 'right'
+              },
+              tooltip: {},
+              animationDuration: 1500,
+              animationEasingUpdate: 'quinticInOut',
+              series: [
+                {
+                  name: 'Connections',
+                  type: 'graph',
+                  layout: 'circular',
+                  circular: {
+                    rotateLabel: true
+                  },
+                  data: this.groupChordData.nodes,
+                  links: this.groupChordData.links,
+                  categories: this.groupChordData.categories,
+                  roam: true,
+                  label: {
+                    position: 'right',
+                    formatter: '{b}'
+                  },
+                  lineStyle: {
+                    color: 'source',
+                    curveness: 0.3,
+                    width: 1 // 保持线的宽度，确保其清晰度
+                  },
+                  emphasis: {
+                    focus: 'adjacency',
+                    lineStyle: {
+                      width: 10 // 鼠标悬停时线的宽度
+                    }
+                  }
+                }
+              ]
+            }
+            this.chartInstance.setOption(option)
+          })
+      },
       // ------------------------------------------------------------
       // 表格数据请求
+      // ------------------------------------------------------------
+  
+      // ===============================
+      // CH1 敌意用户--表格数据
       fetchHostileUsersList() {
-        axios.get('http://localhost:8080/hostile-BigVImgUrlList-list')
+        axios.get('http://localhost:8080/hostile-bigVImgUrlList-list')
           .then(response => {
             this.hostileUsersList = response.data
           })
           .catch(error => {
-            console.error('Error fetching hostile BigVImgUrlList list from backend:', error)
+            console.error('Error fetching hostile bigVImgUrlList list from backend:', error)
             // Fallback to local data
             this.hostileUsersList = [
               {
@@ -924,7 +922,7 @@
               },
               {
                 username: 'tvpatrol',
-                avatar: '',
+                avatar: require('@/assets/QunZu/group_users_images/demo.jpg'),
                 bonus: '',
                 maliciousContentCount: '',
                 retweetCount: '',
@@ -956,6 +954,8 @@
           }
           )
       },
+      // ===============================
+      // CH3 敌意言论--表格数据
       fetchHostileSpeechData() {
         axios.get('http://localhost:8080/hostile-speech-data')
           .then(response => {
@@ -975,7 +975,7 @@
           )
       },
       // ===============================
-      // CH4 群组发现
+      // CH4 群组发现--表格数据
       fetchGroupStatisticTable() {
         axios.get('http://localhost:8080/group-statistic-table-data')
           .then(response => {
@@ -1001,6 +1001,8 @@
           }
           )
       },
+      // ===============================
+      // CH5 群组语义--表格数据
       fetchMainPointsAndOriginalText() {
         axios.get('http://localhost:8080/main-point-data')
           .then(response => {
@@ -1037,15 +1039,17 @@
           }
           )
       },
-      fetchBigVImgUrlList() {
+      // ===============================
+      // CH5 群组参与舆情--头像数据
+      fetchbigVImgUrlList() {
         axios.get('http://localhost:8080/big-v-url-data')
           .then(response => {
-            this.BigVImgUrlList = response.data
+            this.bigVImgUrlList = response.data
           })
           .catch(error => {
             console.error('Error fetching big v url data from backend:', error)
             // Fallback to local data
-            this.BigVImgUrlList = [
+            this.bigVImgUrlList = [
               require('@/assets/QunZu/group_users_images/demo.jpg'),
               require('@/assets/QunZu/group_users_images/cnn.png'),
               require('@/assets/QunZu/group_users_images/demo.jpg'),
@@ -1063,89 +1067,128 @@
           }
           )
       },
+      // ===============================
+      // CH5 群组参与舆情--时间轴数据
       fetchGroupParticipationTimeline() {
         axios.get('http://localhost:8080/group-participation-timeline-data')
           .then(response => {
-            this.groupParticipationTimeline = response.data
+            this.timeLineData = response.data
           })
           .catch(error => {
             console.error('Error fetching group participation timeline data from backend:', error)
-            // Fallback to local data
-            this.groupParticipationTimeline = [
-              {
-                date: 'May.',
-                images: [{ src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 中共对台湾武力恐吓
-                      台湾用行动抵御外部势力守护民主`,
-                  `给中国渔民教训
-                      国军终于硬气了一次`]
-              },
-              {
-                date: 'Apr.',
-                images: [{ src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 中共对台湾武力恐吓
-                      台湾用行动抵御外部势力守护民主`,
-                  `给中国渔民教训
-                      国军终于硬气了一次`]
-              },
-              {
-                date: 'Feb.',
-                images: [{ src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 马英九有意承担两岸和平使者
-                      马习会没有实质性内容`,
-                  ` 赖清德备受美国认可
-                      台海情势左右世界民主政治的发展`,
-                  ` 中国继续就快艇事件威胁台湾`]
-              },
-              {
-                date: 'Jan.',
-                images: [{ src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/QunZu/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 马英九有意承担两岸和平使者
-                      马习会没有实质性内容`,
-                  ` 赖清德备受美国认可
-                      台海情势左右世界民主政治的发展`,
-                  ` 中国继续就快艇事件威胁台湾`]
-              }
-            ]
-          }
-          )
+          // Fallback to local data
+            const initData = {
+              'title': '主要观点',
+              'list': [
+                {
+                  'date': 'May',
+                  'leftContent': [
+                    { 'title': '洪秀柱访陆', 'img': require('@/assets/QunZu/group_users_images/Demo2.jpg') },
+                    { 'title': '国会改革提案', 'img': require('@/assets/QunZu/group_users_images/Demo2.jpg') },
+                    { 'title': '立法院斗殴事件', 'img': require('@/assets/QunZu/group_users_images/Demo2.jpg') },
+                    { 'title': '赖清德就职演说', 'img': require('@/assets/QunZu/group_users_images/Demo2.jpg') }
+                  ],
+                  'rightContent': [
+                    ['民主国家不容许立法院擅自扩权', '暴力不是民主政治'],
+                    ['民进党是双标诈骗党', '民进党少数不服多数'],
+                    ['国民党只代表脆弱多数'],
+                    ['洪秀柱在国民党内已无话语权']
+                  ]
+                },
+                {
+                  'date': 'Apr.',
+                  'leftContent': [
+                    {
+                      'title': '中国快艇越界',
+                      'img': require('@/assets/QunZu/group_users_images/Demo1.jpg')
+                    },
+                    {
+                      'title': '赖清德入选《时代》百大人物',
+                      'img': require('@/assets/QunZu/group_users_images/LQD.jpg')
+                    },
+                    { 'title': '马习会', 'img': require('@/assets/QunZu/group_users_images/Demo2.jpg') }
+                  ],
+                  'rightContent': [
+                    ['马英九有意承担两岸和平使者', '马习会没有实质性内容'],
+                    ['赖清德备受美国认可', '台海情势左右世界民主政治的发展'],
+                    ['中国继续就快艇事件威胁台湾']
+                  ]
+                },
+                {
+                  'date': 'Feb.',
+                  'leftContent': [
+                    {
+                      'title': '中国快艇越界',
+                      'img': require('@/assets/QunZu/group_users_images/Demo1.jpg')
+                    },
+                    {
+                      'title': '中国快艇越界',
+                      'img': require('@/assets/QunZu/group_users_images/Demo1.jpg')
+                    }
+                  ],
+                  'rightContent': [
+                    [' 中共对台湾武力恐吓', '台湾用行动抵御外部势力守护民主', '给中国渔民教训', '国军终于硬气了一次']
+                  ]
+                },
+                {
+                  'date': 'Jan.',
+                  'leftContent': [
+                    { 'title': '台湾大选', 'img': require('@/assets/QunZu/group_users_images/Demo3.jpg') }
+                  ],
+                  'rightContent': [
+                    ['选举是台湾民主的体现', '民进党经过选举应该凝聚共识', '国民党此次失败后将再无翻身机会', '民进党打破轮流执政魔咒']
+                  ]
+                }
+              ]
+            };
+            initData.list.map(item => {
+              item.leftContent.forEach(content => {
+                content.title = this.splitTitle(content.title);
+              });
+            });
+            this.timeLineData = initData;
+          })
+      },
+      // CH5 群组参与舆情--组件--时间轴数据
+      splitTitle(title) {
+        const result = [];
+        for (let i = 0; i < title.length; i += 5) {
+          result.push(title.slice(i, i + 5));
+        }
+        return result;
       }
     },
     async mounted() {
-      // 敌意用户--表格数据
+      // ------------------------------------------------------------
+      // 表格数据请求
+      // ------------------------------------------------------------
+  
+      // CH1 敌意用户--表格数据
       await this.fetchHostileUsersList()
-      // 敌意言论--表格数据
+      // CH3 敌意言论--表格数据
       await this.fetchHostileSpeechData()
-      // 群组发现
+      // CH4 群组发现--表格数据
       await this.fetchGroupStatisticTable()
-      // 群组语义--表格数据
+      // CH5 群组语义--表格数据
       await this.fetchMainPointsAndOriginalText()
-      // 群组参与舆情--头像数据
-      await this.fetchBigVImgUrlList()
-      // 群组参与舆情--时间轴数据
+      // CH5 群组参与舆情--头像数据
+      await this.fetchbigVImgUrlList()
+      // CH5 群组参与舆情--时间轴数据
       await this.fetchGroupParticipationTimeline()
       await this.$nextTick()
-      // -------------------------------------------------
-      // 敌意用户关联--网状关系图
+      // ------------------------------------------------------------
+      // 可视化图请求
+      // ------------------------------------------------------------
+  
+      // CH2 敌意用户关联--网状关系图
       this.initNetChart()
-      // 敌意言论--散点图
+      // CH3 敌意言论--散点图
       this.initScatterChart()
-      // 群组语义--和弦关系图
+      // CH5 群组语义--和弦关系图
       this.initChordChart()
+      // CH4 群组发现--基于社交关系的群组发现
+      this.initSocialForceLayoutChart()
       // 
-      this.initSocialForceLayoutChart() 
     }
   }
   </script>
@@ -1206,8 +1249,8 @@
     /* Center the date pickers */
   }
   
-  
-  /* 敌意用户 */
+  /* ========================================= */
+  /* CH1 敌意用户 */
   .diyi-icon-group {
     /* 居中对齐 */
     display: flex;
@@ -1216,7 +1259,9 @@
     margin-bottom: 30px;
   }
   
-  /* 敌意用户关联 */
+  
+  /* ========================================= */
+  /* CH2 敌意用户关联 */
   .charts-container {
     /* 添加额外样式以保证内外部容器协调 */
     display: flex;
@@ -1307,12 +1352,10 @@
     list-style-type: none;
   }
   
-  /* CH4 */
   .gray-text {
     color: gray;
   }
   
-  /*  每部分结尾的样式  */
   .content-conclusion {
     text-align: center;
     font-family: "Microsoft YaHei", serif;
@@ -1320,6 +1363,167 @@
     font-weight: bold;
     color: deepskyblue;
     margin-top: 20px;
+  }
+  
+  /* ========================================= */
+  /*  CH6 群组参与舆情 */
+  .timelineContainer {
+    height: 100vh;
+    width: 80vw;
+    min-width: 700px;
+    /* 居中显示 */
+    margin-left: 45%;
+  }
+  
+  .titleContainer {
+    padding-bottom: 0;
+  }
+  
+  .headerContainer::before {
+    width: 0;
+    height: 0;
+    border-width: 10px 5px;
+    border-style: solid;
+    border-color: transparent transparent #0a97ef transparent;
+    z-index: 999;
+    background: transparent;
+  }
+  
+  .title {
+    white-space: nowrap;
+    position: absolute;
+    font-size: 14px;
+    left: 447px;
+    top: 40px;
+    color: #c6c6c6;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .itemContainer {
+    display: flex;
+    padding-bottom: 20px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+  }
+  
+  .exceptLeft {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+  
+  .middleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+  }
+  
+  .middleContainer1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+  }
+  
+  .middleContainer1::before {
+    content: "";
+    height: calc(100% + 0px);
+    width: 2px;
+    /* background: #1abac8; */
+    background: transparent;
+    position: absolute;
+    z-index: -1;
+  }
+  
+  .middleContainer::before {
+    content: "";
+    height: calc(100% + 0px);
+    width: 2px;
+    /* background: #1abac8; */
+    background: #0a97ef;
+    position: absolute;
+    z-index: -1;
+  }
+  
+  .circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #fff;
+    background: #0a97ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  
+  .first {
+    padding-top: 20px;
+  }
+  
+  .first .middleContainer::before {
+    height: calc(100% + 22px);
+  }
+  
+  .leftContainer {
+    width: 400px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    column-gap: 40px;
+  }
+  
+  .l-img {
+    height: 70px;
+    width: 70px;
+  }
+  
+  .l-tit {
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    color: #878787;
+  }
+  
+  .rightContainer {
+    margin-left: 10px;
+  }
+  
+  .r-index {
+    font-size: 12px;
+    color: #c9c9c7;
+    background: #656565;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3px;
+    transform: scale(0.75);
+  }
+  
+  .r-txt {
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    color: #878787;
+    margin-bottom: 10px;
+  }
+  
+  .r-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0px;
   }
   </style>
   

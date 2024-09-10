@@ -131,16 +131,16 @@
 
         <div class="UserPersonalitiesValues">
             <div class="title-with-button">
-                <el-switch v-model="showUserPersonalitiesValues"  style="transform: scale(1.25);" />
+                <el-switch v-model="showUserPersonalitiesValues" style="transform: scale(1.25);" />
                 <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户人格与价值观</h2>
             </div>
             <div class="UserPersonalitiesValues-container" v-show="showUserPersonalitiesValues"
                 style="display: flex; justify-content: space-around; align-items: center;">
-                <div style="width: 400px; text-align: center;">
+                <div style="width: 600px; text-align: center;">
                     <div ref="UserPersonalitiesValuesRadarChart" style="height: 400px;" />
                     <div class="content-conclusion">[E] 大五人格</div>
                 </div>
-                <div style="width: 400px; text-align: center;">
+                <div style="width: 600px; text-align: center;">
                     <div ref="UserPersonalitiesValuesBarChart" style="height: 400px;" />
                     <div class="content-conclusion">[F] 施瓦茨价值观</div>
                 </div>
@@ -151,10 +151,10 @@
 
         <div class="UserCenterNetwork">
             <div class="title-with-button">
-                <el-switch v-model="showUserCenterNetwork" style="transform: scale(1.25);"/>
+                <el-switch v-model="showUserCenterNetwork" style="transform: scale(1.25);" />
                 <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户中心网络</h2>
             </div>
-            <div class="UserCenterNetwork-container"  v-show="showUserCenterNetwork"
+            <div class="UserCenterNetwork-container" v-show="showUserCenterNetwork"
                 style="display: flex; justify-content: space-around; align-items: center;">
                 <!-- Social Graph -->
                 <div style="width: 300px; text-align: center;">
@@ -257,12 +257,12 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <div class="content-conclusion" style="margin-bottom: 10px; display: inline-block;">[J] 针对{{ xxx }}的立场
+                    <div class="content-conclusion" style="margin-bottom: 10px; display: inline-block;">[J] 针对xxx的立场
                     </div>
 
                     <el-select v-model="selectedStandPointUser" placeholder="选择用户名"
                         style="display: inline-block; vertical-align: middle; margin-left: 10px;"
-                        @change="handleUserChange">
+                        @change="handleUserChange(selectedStandPointUser)">
                         <el-option v-for="user in StandpointData" :key="user.username" :label="user.username"
                             :value="user.username">
                         </el-option>
@@ -275,7 +275,7 @@
 
                     <!-- Todo 下面为对应的表格(element-ui) 表格为2行三列 第一行为一个表头(占三列), 第二行第一列为StandpointData[0]中的对应的username字段，第二列为对应的StandpointData[0].data中name字段，第三列为StandpointData[0].data中text字段-->
                     <div style="width: 50%; margin-top: 20px;">
-                        <div v-on="selectedStandPointUser" style="
+                        <div style="
                                 background-color: rgb(255, 240, 245);
                                 padding: 10px;
                                 text-align: center;
@@ -315,7 +315,7 @@
 
                     <!-- Right Part: Element UI Table -->
                     <div style="width: 50%;">
-                        <div v-on="selectedStandPointUser" style="
+                        <div style="
                                 background-color: rgb(255, 240, 245);
                                 padding: 10px;
                                 text-align: center;
@@ -325,13 +325,10 @@
                              ">
                             【极端愤怒】情绪对应原文(部分)
                         </div>
-                        <el-table :data="OpinionTableData" style="width: 90%;" border stripe :show-header="false">
-                            <!-- 第二行：话题 -->
-                            <el-table-column prop="field" width="120">
-                            </el-table-column>
-                            <!-- 第三行：原文(部分) -->
-                            <el-table-column prop="value">
-                            </el-table-column>
+
+                        <el-table :data="EmotionData" stripe :show-header="false" style="width: 90%; border color: gray">
+                            <el-table-column prop="point" width="80" />
+                            <el-table-column prop="text" />
                         </el-table>
                     </div>
                 </div>
@@ -341,83 +338,60 @@
 
 
         <!-- -------------------------------------------------------------------------------------------------- -->
-      <!-- CH6 用户参与舆情   TODO：残次品，需要大修改- -->
-      <!-- -------------------------------------------------------------------------------------------------- -->
-      <div class="UserPublicSentiment">
-        <div class="title-with-button">
-                <el-switch v-model="showUserPublicOpinion" style="transform: scale(1.25); "/>
+        <!-- CH6 用户参与舆情 -->
+        <!-- -------------------------------------------------------------------------------------------------- -->
+        <div class="UserPublicSentiment">
+            <div class="title-with-button">
+                <el-switch v-model="showUserPublicOpinion" style="transform: scale(1.25); " />
                 <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">用户参与舆情</h2>
-        </div>
-
-        <div
-          v-show="showUserPublicOpinion"
-          class="user-panel"
-          style="display: flex; flex-direction: column; align-items: center; height: 100%;"
-        >
-          <!-- 底部区域（待定） -->
-          <div class="custom-timeline">
-            <div
-              v-for="(item, index) in userParticipationTimeline"
-              :key="index"
-              style="display: flex; align-items: center; position: relative; margin-bottom: 100px;"
-            > <!-- 增大节点间隔 -->
-              <!-- 时间轴连线（仅非首个节点显示） -->
-              <div
-                v-if="index !== 0"
-                style="border-left: 10px solid rgb(0,157,255); height: 220px; position: absolute; left: 46%; transform: translateX(-70%);margin-bottom: 260px;"
-              />
-  
-              <!-- 节点内容包裹 -->
-              <div style="display: flex; align-items: center;">
-                <!-- 左侧图片区域 -->
-                <div style="display: flex; flex-wrap: wrap;">
-                  <div
-                    v-for="(img, imgIndex) in item.images"
-                    :key="imgIndex"
-                    style="position: relative; margin: 20px; margin-top: 50px;"
-                  >
-                    <img
-                      :src="img.src"
-                      :alt="img.title"
-                      style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;"
-                    >
-                    <div
-                      style="position: absolute; bottom: 85px; left: 0; width: 100%; text-align: center; color: gray; padding: 3px 0;  
-                  display: -webkit-box; /* 将元素设为伸缩盒模型显示 */
-                  -webkit-line-clamp: 2; /* 限制在一个块元素显示的文本的行数 */
-                  -webkit-box-orient: vertical; /* 设置或检索伸缩盒对象的子元素的排列方式 */ 
-                  overflow: hidden; /* 隐藏超出的内容 */
-                  text-overflow: ellipsis;"
-                    >
-                      {{ img.title }}</div>
-                  </div>
-                </div>
-  
-                <!-- 中间日期圆圈 -->
-                <div
-                  style="width: 55px; height: 55px; border-radius: 50%; background-color: rgb(0,157,255); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;"
-                >
-                  {{ item.date }}</div>
-  
-                <!-- 右侧文本区域 -->
-                <div style="display: flex; flex-direction: column;">
-                  <div
-                    v-for="(text, textIndex) in item.texts"
-                    :key="textIndex"
-                    style="margin-bottom: 15px; list-style-type: none; margin-left: 20px;color: gray;"
-                  >
-                    <i class="el-icon-circle-check" style="margin-right: 5px;" />{{ text }}
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-    </div>
 
-        
+            <div v-show="showUserPublicOpinion" class="user-panel"
+                style="display: flex; flex-direction: column; align-items: center; height: 100%;">
+                <!-- 底部区域（待定） -->
+                <div class="custom-timeline">
+                    <div class="timelineContainer">
+                        <div class="itemContainer flex titleContainer">
+                            <div class="leftContainer flex" />
+                            <div class="exceptLeft">
+                                <div class=" middleContainer1 headerContainer">
+                                    <div class="title">主要观点</div>
+                                </div>
+                                <div class="rightContainer" />
+                            </div>
+                        </div>
+                        <div v-for="(item, index) in userParticipationTimeline.list" :key="item.id"
+                            class="itemContainer flex" :class="{ first: index === 0 }">
+                            <div class="leftContainer flex">
+                                <!-- 左侧的图片和图片标题 -->
+                                <div v-for="leftItem in item.leftContent" :key="leftItem.id" class="leftItem">
+                                    <div v-for="t in leftItem.title" :key="t" class="l-tit">{{ t }}</div>
+                                    <img :src="leftItem.img" class="l-img">
+                                </div>
+                            </div>
+                            <!-- 中间的圆圈和右边的列表 -->
+                            <div class="exceptLeft">
+                                <div class="middleContainer">
+                                    <div class="circle">{{ item.date }}</div>
+                                </div>
+                                <div class="rightContainer">
+                                    <div v-for="(rightItem, rIndex) in item.rightContent" :key="rIndex">
+                                        <div class="flex">
+                                            <div class="r-index">{{ rIndex + 1 }}</div>
+                                            <div class="r-content">
+                                                <div v-for="rTxt in rightItem" :key="rTxt" class="r-txt">{{ rTxt }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </div>
 </template>
 
 <script>
@@ -479,8 +453,8 @@ export default {
                 'Neuroticism': 0.3
             },
             PersonalValueData: {
-                posvalue: [0.1, 0.2, 0.3, 0.4, 0.5],
-                negvalue: [-0.1, -0.2, -0.3, -0.4, -0.5]
+                posvalue: [0.1, 0.2, 0, 0.4, 0, 0.3, 0.9, 0.5, 0, 0],
+                negvalue: [0, 0, -0.3, 0, -0.5, 0, 0, 0, -0.6, -0.4]
             },
 
             //  用户中心网络数据
@@ -1002,12 +976,14 @@ export default {
 
             radarChart.setOption(radarOption)
         },
-        initPersonalitiesValuesBarChart(data) {
-            const barDom = this.$refs.UserPersonalitiesValuesBarChart
-            const barChart = echarts.init(barDom)
 
-            const posvalue = data.posvalue
-            const negvalue = data.negvalue
+
+        initPersonalitiesValuesBarChart(data) {
+            const barDom = this.$refs.UserPersonalitiesValuesBarChart;
+            const barChart = echarts.init(barDom);
+
+            const posvalue = data.posvalue;
+            const negvalue = data.negvalue;
 
             const barOption = {
                 tooltip: {
@@ -1020,11 +996,11 @@ export default {
                     data: ['正向', '反向']
                 },
                 xAxis: {
-                    type: 'value'
+                    type: 'category',  // 改为 'category'
+                    data: ['合作', '诚实', '慷慨', '公正', '勇敢', '权力', '成就', '享乐', '刺激', '自主']  // 将类别放在 X 轴上
                 },
                 yAxis: {
-                    type: 'category',
-                    data: ['合作', '诚实', '慷慨', '公正', '勇敢']
+                    type: 'value'  // 改为 'value'
                 },
                 series: [
                     {
@@ -1033,7 +1009,11 @@ export default {
                         stack: '总量',
                         label: {
                             show: true,
-                            position: 'insideRight'
+                            position: 'top',  // 改为 'insideTop'，显示在柱子的顶部
+                            formatter: function (params) {
+                                // 值为0时不显示标签
+                                return params.value === 0 ? '' : params.value;
+                            }
                         },
                         data: posvalue
                     },
@@ -1043,15 +1023,20 @@ export default {
                         stack: '总量',
                         label: {
                             show: true,
-                            position: 'insideRight'
+                            position: 'insideBottom',  // 改为 'insideTop'，显示在柱子的顶部
+                            formatter: function (params) {
+                            // 值为0时不显示标签
+                            return params.value === 0 ? '' : params.value;
+                    }
                         },
                         data: negvalue
                     }
                 ]
-            }
+            };
 
-            barChart.setOption(barOption)
+            barChart.setOption(barOption);
         },
+
 
         /*   用户中心网络 */
         fetchUserCenterGraphData() {
@@ -1415,23 +1400,18 @@ export default {
                 });
         },
 
-        switchUserStandPoint() {
-            if (this.selectedStandPointUser) {
-                const user = this.StandpointData.find(user => user.username === this.selectedStandPointUser);
-                if (user) {
-                    this.initStandpointChart(user);
-                }
-            } else {
-                // 如果没有选择用户，默认展示第一个
-                const defaultUser = this.StandpointData[0];
-                this.initStandpointChart(defaultUser);
-            }
-        },
+
         handleUserChange(value) {
             // 当选择改变时，立即调用 initOpinionChart 展示选中用户的观点图表
             const user = this.StandpointData.find(user => user.username === value);
             if (user) {
                 this.initStandpointChart(user);
+                this.generateStandpointTableData(user);
+            } else {
+                // 如果没有选择用户，默认展示第一个
+                const defaultUser = this.StandpointData[0];
+                this.initStandpointChart(defaultUser);
+                this.generateStandpointTableData(defaultUser);
             }
         },
 
@@ -1495,29 +1475,50 @@ export default {
             myChart.setOption(option);
         },
 
-        generateStandpointTableData() {
-            // 将 StandpointData 转换为表格数据格式
-            this.StandpointtableData = this.StandpointData.reduce((acc, curr) => {
-                curr.data.forEach(dataItem => {
-                    acc.push({
-                        username: curr.username,
-                        name: dataItem.name,
-                        text: dataItem.text
-                    });
-                });
-                return acc;
-            }, []);
+        generateStandpointTableData(data) {
+            this.StandpointtableData = data.data.map(dataItem => {
+                return {
+                    username: data.username, // 如果需要显示用户名，这里需要传递
+                    name: dataItem.name,
+                    text: dataItem.text
+                };
+            });
         },
+
 
         fetchUserEmotionalData() {
             axios.get('https://localhost:8080/user/EmotionDistribution')
                 .then(response => {
-                    this.OpinionTopicData = response.data;  //  这里应该获取所有话题观点数据
+                    this.EmotionData = response.data;  //  这里应该获取所有话题观点数据
                     this.initEmotionalChart(this.EmotionData);  //  图加载所有话题观点
                     // this.prepareTableData(this.OpinionTopicData[0]);  //  这里表格应该展示选中的echarts图上的数据 默认有一个选中
                 })
                 .catch(error => {
                     console.error('Error fetching OpinionViewData:', error);
+                    this.EmotionData = [
+                        {
+                            point: '极端愤怒',
+                            text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
+                                        ---\n
+                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
+                                        ---\n
+                                        我们是菲律宾青年。我们停在了西菲律宾海\n
+                                        ---\n
+                                        我们是菲律宾青年。我们停在了西菲律宾海\n
+                                        ---\n
+                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
+                                        ---\n
+                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
+                                        ---\n
+                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海
+                                        ---\n
+                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海(WPS) 的领土权利。\n
+                                        ---\n
+                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海(WPS) 的领土权利。\n
+                                        ---\n
+                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来-- - 我们是菲律宾青年。我们停在了西菲律宾海`
+                        }
+                    ]
                     this.initEmotionalChart(this.EmotionData);
                     // this.prepareTableData(this.OpinionTopicData[0]);
                 });
@@ -1558,7 +1559,9 @@ export default {
                 ],
                 legend: {
                     show: true,
-                    data: ['情绪', '极端情绪']
+                    data: ['情绪', '极端情绪'],
+                    // top: '2%',
+                    left: 'center'
                 }
             }
             myChart.setOption(option)
@@ -1566,91 +1569,95 @@ export default {
 
 
         // 用户参与舆情
-        fetchBigVImgUrlList() {
-        axios.get('http://localhost:8080/big-v-url-data')
-          .then(response => {
-            this.BigVImgUrlList = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching big v url data from backend:', error)
-            // Fallback to local data
-            this.BigVImgUrlList = [
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/cnn.png'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/woman.png'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/man.png'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/leader.png'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg'),
-              require('@/assets/userinfo_images/group_users_images/demo.jpg')
-            ]
-          }
-          )
-      },
-      fetchuserParticipationTimeline() {
-        axios.get('http://localhost:8080/user-participation-timeline-data')
-          .then(response => {
-            this.userParticipationTimeline = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching user participation timeline data from backend:', error)
-            // Fallback to local data
-            this.userParticipationTimeline = [
-              {
-                date: 'May.',
-                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 中共对台湾武力恐吓
-                      台湾用行动抵御外部势力守护民主`,
-                  `给中国渔民教训
-                      国军终于硬气了一次`]
-              },
-              {
-                date: 'Apr.',
-                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 中共对台湾武力恐吓
-                      台湾用行动抵御外部势力守护民主`,
-                  `给中国渔民教训
-                      国军终于硬气了一次`]
-              },
-              {
-                date: 'Feb.',
-                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 马英九有意承担两岸和平使者
-                      马习会没有实质性内容`,
-                  ` 赖清德备受美国认可
-                      台海情势左右世界民主政治的发展`,
-                  ` 中国继续就快艇事件威胁台湾`]
-              },
-              {
-                date: 'Jan.',
-                images: [{ src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '赖清德入选《时代》百大人物' },
-                { src: require('@/assets/userinfo_images/group_users_images/LQD.jpg'), title: '中国快艇越界' }
-                ],
-                texts: [` 马英九有意承担两岸和平使者
-                      马习会没有实质性内容`,
-                  ` 赖清德备受美国认可
-                      台海情势左右世界民主政治的发展`,
-                  ` 中国继续就快艇事件威胁台湾`]
-              }
-            ]
-          }
-          )
-      }
+        fetchuserParticipationTimeline() {
+            axios.get('http://localhost:8080/user-participation-timeline-data')
+                .then(response => {
+                    this.userParticipationTimeline = response.data
+                })
+                .catch(error => {
+                    console.error('Error fetching user participation timeline data from backend:', error)
+                    // Fallback to local data
+                    const initData = {
+                        'title': '主要观点',
+                        'list': [
+                            {
+                                'date': 'May',
+                                'leftContent': [
+                                    { 'title': '洪秀柱访陆', 'img': require('@/assets/userinfo_images/group_users_images/Demo2.jpg') },
+                                    { 'title': '国会改革提案', 'img': require('@/assets/userinfo_images/group_users_images/Demo2.jpg') },
+                                    { 'title': '立法院斗殴事件', 'img': require('@/assets/userinfo_images/group_users_images/Demo2.jpg') },
+                                    { 'title': '赖清德就职演说', 'img': require('@/assets/userinfo_images/group_users_images/Demo2.jpg') }
+                                ],
+                                'rightContent': [
+                                    ['民主国家不容许立法院擅自扩权', '暴力不是民主政治'],
+                                    ['民进党是双标诈骗党', '民进党少数不服多数'],
+                                    ['国民党只代表脆弱多数'],
+                                    ['洪秀柱在国民党内已无话语权']
+                                ]
+                            },
+                            {
+                                'date': 'Apr.',
+                                'leftContent': [
+                                    {
+                                        'title': '中国快艇越界',
+                                        'img': require('@/assets/userinfo_images/group_users_images/Demo1.jpg')
+                                    },
+                                    {
+                                        'title': '赖清德入选《时代》百大人物',
+                                        'img': require('@/assets/userinfo_images/group_users_images/LQD.jpg')
+                                    },
+                                    { 'title': '马习会', 'img': require('@/assets/userinfo_images/group_users_images/Demo2.jpg') }
+                                ],
+                                'rightContent': [
+                                    ['马英九有意承担两岸和平使者', '马习会没有实质性内容'],
+                                    ['赖清德备受美国认可', '台海情势左右世界民主政治的发展'],
+                                    ['中国继续就快艇事件威胁台湾']
+                                ]
+                            },
+                            {
+                                'date': 'Feb.',
+                                'leftContent': [
+                                    {
+                                        'title': '中国快艇越界',
+                                        'img': require('@/assets/userinfo_images/group_users_images/Demo1.jpg')
+                                    },
+                                    {
+                                        'title': '中国快艇越界',
+                                        'img': require('@/assets/userinfo_images/group_users_images/Demo1.jpg')
+                                    }
+                                ],
+                                'rightContent': [
+                                    [' 中共对台湾武力恐吓', '台湾用行动抵御外部势力守护民主', '给中国渔民教训', '国军终于硬气了一次']
+                                ]
+                            },
+                            {
+                                'date': 'Jan.',
+                                'leftContent': [
+                                    { 'title': '台湾大选', 'img': require('@/assets/userinfo_images/group_users_images/Demo3.jpg') }
+                                ],
+                                'rightContent': [
+                                    ['选举是台湾民主的体现', '民进党经过选举应该凝聚共识', '国民党此次失败后将再无翻身机会', '民进党打破轮流执政魔咒']
+                                ]
+                            }
+                        ]
+                    };
+                    initData.list.map(item => {
+                        item.leftContent.forEach(content => {
+                            content.title = this.splitTitle(content.title);
+                        });
+                    });
+                    this.userParticipationTimeline = initData;
+                }
+                )
+        },
+
+        splitTitle(title) {
+            const result = [];
+            for (let i = 0; i < title.length; i += 5) {
+                result.push(title.slice(i, i + 5));
+            }
+            return result;
+        }
     },
 };
 
@@ -1753,53 +1760,170 @@ hr {
 
 
 /* 用户参与舆情样式 */
-.UserPublicOpinion-container {
-    display: flex;
-    flex-direction: column-reverse;
-    align-items: center;
-    padding: 20px;
-    background-color: #f9f9f9;
-}
-
-.UserPublicOpinion-item {
+.custom-timeline {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
 }
 
-.UserPublicOpinion-month {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-    font-size: 1.2em;
+
+.timelineContainer {
+    height: 100vh;
+    width: 80vw;
+    min-width: 700px;
+    /* 居中显示 */
+    margin-left: 45%;
 }
 
-.UserPublicOpinion-content {
+.titleContainer {
+    padding-bottom: 0;
+}
+
+.headerContainer::before {
+    width: 0;
+    height: 0;
+    border-width: 10px 5px;
+    border-style: solid;
+    border-color: transparent transparent #0a97ef transparent;
+    z-index: 999;
+    background: transparent;
+}
+
+.title {
+    white-space: nowrap;
+    position: absolute;
+    font-size: 14px;
+    left: 447px;
+    top: 40px;
+    color: #c6c6c6;
+}
+
+.flex {
+    display: flex;
+}
+
+.itemContainer {
+    display: flex;
+    padding-bottom: 20px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.exceptLeft {
+    flex: 1;
     display: flex;
     align-items: center;
+    margin-left: 20px;
+    margin-top: 20px;
 }
 
-.UserPublicOpinion-image img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    margin-right: 20px;
+.middleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
 }
 
-.UserPublicOpinion-description {
-    max-width: 400px;
+.middleContainer1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
 }
 
-.UserPublicOpinion-description ul {
-    list-style-type: none;
-    padding: 0;
+.middleContainer1::before {
+    content: "";
+    height: calc(100% + 0px);
+    width: 2px;
+    /* background: #1abac8; */
+    background: transparent;
+    position: absolute;
+    z-index: -1;
 }
 
-.UserPublicOpinion-description li {
-    margin-bottom: 5px;
+.middleContainer::before {
+    content: "";
+    height: calc(100% + 0px);
+    width: 2px;
+    /* background: #1abac8; */
+    background: #0a97ef;
+    position: absolute;
+    z-index: -1;
+}
+
+.circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #fff;
+    background: #0a97ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.first {
+    padding-top: 20px;
+}
+
+.first .middleContainer::before {
+    height: calc(100% + 22px);
+}
+
+.leftContainer {
+    width: 400px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    column-gap: 40px;
+}
+
+.l-img {
+    height: 70px;
+    width: 70px;
+}
+
+.l-tit {
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    color: #878787;
+}
+
+.rightContainer {
+    margin-left: 10px;
+}
+
+.r-index {
+    font-size: 12px;
+    color: #c9c9c7;
+    background: #656565;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 3px;
+    transform: scale(0.75);
+}
+
+.r-txt {
+    font-size: 14px;
+    line-height: 1;
+    text-align: center;
+    color: #878787;
+    margin-bottom: 10px;
+}
+
+.r-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 0px;
 }
 </style>
 

@@ -87,20 +87,20 @@ export const constantRoutes = [
 //     ]
 //   },
 
-//   {
-//     path: '/qunzu',
-//     component: Layout,
-//     children: [
-//       {
-//         path: 'index',
-//         name: 'qunzu',
-//         component: () => import('@/views/QunZu/index.vue'),
-//         // component: () => import('@/views/QunZu/demo.vue'),
+  {
+    path: '/qunzu',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'qunzu',
+        component: () => import('@/views/QunZu/index.vue'),
+        // component: () => import('@/views/QunZu/demo.vue'),
 
-//         meta: { title: '群组与敌意分析页', icon: 'link' }
-//       }
-//     ]
-//   },
+        meta: { title: '群组与敌意分析页', icon: 'link' }
+      }
+    ]
+  },
   {
     path: '/example',
     component: Layout,

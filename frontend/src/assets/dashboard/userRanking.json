@@ -1,13 +1,12 @@
 [
-  "nabuntu",
-  "obi_prodigalson",
-  "jclem3",
-  "ruminarist",
-  "richheydarian",
-  "rapplerdotcom",
-  "jaytaryela",
-  "another_user1",
-  "another_user2",
-  "another_user3"
+  { "user": "nabuntu", "date": "2024-01-12" },
+  { "user": "obi_prodigalson", "date": "2024-03-25" },
+  { "user": "jclem3", "date": "2024-05-18" },
+  { "user": "ruminarist", "date": "2024-07-10" },
+  { "user": "richheydarian", "date": "2024-09-06" },
+  { "user": "rapplerdotcom", "date": "2024-11-22" },
+  { "user": "jaytaryela", "date": "2024-02-14" },
+  { "user": "another_user1", "date": "2024-04-30" },
+  { "user": "another_user2", "date": "2024-08-20" },
+  { "user": "another_user3", "date": "2024-12-05" }
 ]
-
