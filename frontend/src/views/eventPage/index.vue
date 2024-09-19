@@ -31,8 +31,20 @@
           </div>
         </div>
         <div class="date-selectors">
-          <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
-          <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
+          <el-select
+            v-model="timeinfo_selected"
+            placeholder="请选择"
+            @change="fetchEventData"
+            class="custom-select"
+          >
+            <el-option
+              v-for="event in times"
+              :key="event"
+              :label="event"
+              :value="event"
+            />
+          </el-select>
+          
         </div>
       </div>
   
@@ -40,7 +52,7 @@
       <div class="LesMiserables">
         <div class="title-with-button">
           <el-switch v-model="showEventTree" @change="toggleChart" style="transform: scale(1.25); "/>
-          <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">舆情事件树</h2>
+          <h2 style="color:rgb(0, 157, 255); font-weight: bold; margin-left:15px">舆情事件树</h2>
         </div>
       </div>
       <div v-if="showEventTree">
@@ -93,11 +105,22 @@
   
         <div id="SpreadingChain" style="height:200px; width:100%"></div>
         <div>
-          <el-steps :active="2" align-center>
-            <el-step title="步骤1" description="这是一段很长很长很长的描述性文字"></el-step>
-            <el-step title="步骤2" description="这是一段很长很长很长的描述性文字"></el-step>
-            <el-step title="步骤3" description="这是一段很长很长很长的描述性文字"></el-step>
-            <el-step title="步骤4" description="这是一段很长很长很长的描述性文字"></el-step>
+          <el-steps :active="active">
+            <el-step>
+              <i class="step01" slot="icon"></i>
+            </el-step>
+            
+            <el-step >
+              <i class="step01" slot="icon"></i>
+            </el-step>
+  
+            <el-step>
+              <i class="step01" slot="icon"></i>
+            </el-step>
+              
+            <el-step >
+              <i class="step01" slot="icon"></i>
+            </el-step>
           </el-steps>
         </div>
         
@@ -716,39 +739,49 @@
         <h2 style="color:rgb(2, 157, 255); font-weight: bold; margin-left:15px">舆情事件分析——内容</h2>
       </div>
       <div v-if="showContentInfo">
-        <div class="centered-select">
-          <el-select
-            v-model="eventinfo_selected.content"
-            placeholder="请选择"
-            @change="fetchEventData"
-            class="custom-select"
-          >
-            <el-option
-              v-for="event in events.content"
-              :key="event"
-              :label="event"
-              :value="event"
-            />
-          </el-select>
-        </div>
-        <el-table :data="tableDataWithTime.content" border style="width: 950px;margin:30px auto;" :row-class-name="getRowClassName">
-          <el-table-column prop="ranking1" label="排名" width="50px" />
-          <el-table-column prop="ranking2" label="排名*" width="50px" />
-          <el-table-column prop="content" label="高频传播内容" width="810px" />
-          <el-table-column prop="origin" label="源头" width="40px" />
-        </el-table>
-        <div class="content-conclusion">
-          [F] 高频传播内容
-        </div>
-  
-  
-        <div ref="chart4" style="width: 800px;height:600px;"></div>
-  
-  
-        <div class="cloudMap">
-          [G.1] 高频词云图
-        </div>
-        <div class="frequentPhrase">
+        <el-row>
+          <el-col :span="24">
+            <div class="centered-select">
+              <el-select
+                v-model="eventinfo_selected.content"
+                placeholder="请选择"
+                @change="fetchEventData"
+                class="custom-select"
+              >
+                <el-option
+                  v-for="event in events.content"
+                  :key="event"
+                  :label="event"
+                  :value="event"
+                />
+              </el-select>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-table :data="tableDataWithTime.content" border style="width: 950px;margin:30px auto;" :row-class-name="getRowClassName">
+              <el-table-column prop="ranking1" label="排名" width="50px" />
+              <el-table-column prop="ranking2" label="排名*" width="50px" />
+              <el-table-column prop="content" label="高频传播内容" width="810px" />
+              <el-table-column prop="origin" label="源头" width="40px" />
+            </el-table>
+            <div class="content-conclusion">
+              [F] 高频传播内容
+            </div>
+          </el-col>
+          
+        </el-row>
+        
+        <el-row :gutter="10" style="margin-top: 30px;" type="flex" justify="center">
+          <el-col :span="7">
+            <div ref="chart4" style="width:400px;height:400px;margin-bottom: 20px;"></div>
+            <div class="cloudMap">
+              [G.1] 高频词云图
+            </div>
+          </el-col>
+          <el-col :span="10">
+            <div class="frequentPhrase">
           [G.2] 高频词的共现
         </div>
         <div class="right-aligned-container">
@@ -827,6 +860,16 @@
             </tr>
           </table>
         </div>
+          </el-col>
+          
+        </el-row>
+       
+        
+        
+  
+  
+        
+        
       </div>
       <hr>
   
@@ -949,6 +992,7 @@
   import "echarts-wordcloud/dist/echarts-wordcloud";
   import "echarts-wordcloud/dist/echarts-wordcloud.min";
   
+  import avatarURL from "../../assets/QunZu/group_users_images/demo.jpg";
   
   export default {
     data() {
@@ -994,6 +1038,7 @@
   
           time:2024-9-9
         },
+        timeinfo_selected:'近一天',
         flareData:{
           content:null,
           time:2024-9-9
@@ -1004,7 +1049,11 @@
           content:['民进党滥用公权力','民进党黑金政治','民进党执政不力'],
           time:2024-9-9
         },
-        
+        times:[
+          '近一天',
+          '近三天',
+          '近七天'
+        ],
         showEventTree:true,
         showSpreadingInfo:true,
         showUserInfo:true,
@@ -1014,7 +1063,7 @@
         showEvolutionInfo:true,
         
         circleUrl:{
-          content: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+          content: avatarURL,
           time: 2024-9-9
         },
         sizeList: ["large", "medium", "small"],
@@ -2082,5 +2131,61 @@
     width:720px;
     text-align:left;
   }
+  .step01, .step02, .step03, .step04{
+    width: 35px;
+    height: 35px;
+    background-size: 100% 100%;
+  }
+  .step01{
+    background-image: url("../../assets/QunZu/group_users_images/cnn.png");
+  }
+  .step02{
+    background-image: url("../../assets/QunZu/group_users_images/demo.jpg");
+  }
+  .step03{
+    background-image: url("../../assets/QunZu/group_users_images/leader.png");
+  }
+  .step04{
+    background-image: url("../../assets/QunZu/group_users_images/LQD.jpg");
+  }
+   .el-steps{
+    width: 100%;
+    .el-step.is-horizontal .el-step__line{
+      top: 50%;
+      left: 0px;
+      right: 0px;
+    }
+    .el-step__head.is-process{
+      border-color:  #285edf;
+    }
+    .el-step__head.is-finish{
+      border-color: #285edf;
+    }
+    .el-step__title.is-process{
+      color:  #285edf;
+    }
+    .el-step__title.is-finish{
+      color: #285edf;
+    }
+    .el-step__icon{
+      width:56px;
+      height:56px;
+    }
+  
+  
+    .is-finish .step02{
+      background-image: url("../../assets/QunZu/group_users_images/demo.jpg");
+    }
+    .is-finish .step03{
+      background-image: url("../../assets/QunZu/group_users_images/leader.png");
+    }
+    .is-finish .step04{
+      background-image: url("../../assets/QunZu/group_users_images/LQD.jpg");
+    }
+   
+  }
+  
+  
+  
   </style>
   

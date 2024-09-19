@@ -27,15 +27,24 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'dashboard' }
-    }]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '首页', icon: 'dashboard' }
+      },
+      {
+        path: 'hiddenPage',
+        name: 'HiddenPage',
+        component: () => import('@/views/dashboard/indexFake.vue'),
+        hidden: true, // 不显示在侧边栏
+        meta: { title: '详情页面' }
+      }
+    ]
   },
 
-  
+
 
 //   {
 //     path: '/form',
@@ -87,20 +96,20 @@ export const constantRoutes = [
 //     ]
 //   },
 
-  {
-    path: '/qunzu',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'qunzu',
-        component: () => import('@/views/QunZu/index.vue'),
-        // component: () => import('@/views/QunZu/demo.vue'),
+//   {
+//     path: '/qunzu',
+//     component: Layout,
+//     children: [
+//       {
+//         path: 'index',
+//         name: 'qunzu',
+//         component: () => import('@/views/QunZu/index.vue'),
+//         // component: () => import('@/views/QunZu/demo.vue'),
 
-        meta: { title: '群组与敌意分析页', icon: 'link' }
-      }
-    ]
-  },
+//         meta: { title: '群组与敌意分析页', icon: 'link' }
+//       }
+//     ]
+//   },
   {
     path: '/example',
     component: Layout,

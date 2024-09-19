@@ -30,10 +30,20 @@
             <div>Custom</div>
           </div>
         </div>
-        <div class="date-selectors">
-          <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
-          <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
-        </div>
+<!--        <div class="date-selectors">-->
+<!--          <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />-->
+<!--          <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />-->
+<!--        </div>-->
+          <div class="filtered-date">
+            <el-select v-model="recentDate_selected" clearable placeholder="时间线" @change="fetchRecentDate" @clear="resetData">
+              <el-option
+                v-for="date in dates"
+                :key="date"
+                :label="date"
+                :value="date">
+              </el-option>
+            </el-select>
+          </div>
       </div>
 
       <hr>
@@ -91,7 +101,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="总内容数量榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -106,8 +116,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="generalDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="generalDialogVisible = false">确认</el-button>
+                    <el-button @click="generalDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="generalDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -138,7 +148,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="今日内容数量榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -153,8 +163,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="todayDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="todayDialogVisible = false">确认</el-button>
+                    <el-button @click="todayDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="todayDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -185,7 +195,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="近期内容数量飙升榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -200,8 +210,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="recentContentDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="recentContentDialogVisible = false">确认</el-button>
+                    <el-button @click="recentContentDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="recentContentDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -232,7 +242,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="敌意言论排行榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -247,8 +257,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="hostileDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="hostileDialogVisible = false">确认</el-button>
+                    <el-button @click="hostileDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="hostileDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -281,7 +291,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="总参与人数榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -296,8 +306,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="totalParticipantsDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="totalParticipantsDialogVisible = false">确认</el-button>
+                    <el-button @click="totalParticipantsDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="totalParticipantsDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -321,7 +331,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="今日参与人数榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -336,8 +346,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="todayParticipantsDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="todayParticipantsDialogVisible = false">确认</el-button>
+                    <el-button @click="todayParticipantsDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="todayParticipantsDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
             </div>
@@ -368,7 +378,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="近期参与人数飙升榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -383,8 +393,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="recentUserDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="recentUserDialogVisible = false">确认</el-button>
+                    <el-button @click="recentUserDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="recentUserDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -400,7 +410,7 @@
                   v-for="(event, index) in filteredEventRanking"
                   :key="index"
                   class="ranking-item"
-                  @click="openHostileRaioDialog(event)"
+                  @click="openHostileRatioDialog(event)"
                 >
                   {{ index + 1 }}. {{ event.event }}
                 </div>
@@ -415,7 +425,7 @@
                   <!-- 只显示选中的事件 -->
                   <el-form :model="form">
                     <el-form-item label="标题">
-                      <el-input value="敌意言论比例榜"></el-input>
+                      <el-input :value="dialogTitle"></el-input>
                     </el-form-item>
                   </el-form>
                   <el-form :model="form">
@@ -430,8 +440,8 @@
                     </el-form-item>
                   </el-form>
                   <span slot="footer" class="dialog-footer">
-                    <el-button @click="hostileRatioDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="hostileRatioDialogVisible = false">确认</el-button>
+                    <el-button @click="hostileRatioDialogVisible = false">Cancel</el-button>
+                    <el-button type="primary" @click="hostileRatioDialogVisible = false">Confirm</el-button>
                   </span>
                 </el-dialog>
               </div>
@@ -488,7 +498,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="大V用户(出度)榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -503,8 +513,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user1DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user1DialogVisible = false">确认</el-button>
+                  <el-button @click="user1DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user1DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -534,7 +544,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="大V用户(高阶互动)榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -549,8 +559,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user2DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user2DialogVisible = false">确认</el-button>
+                  <el-button @click="user2DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user2DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -574,7 +584,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="大V用户(出度)榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -589,8 +599,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user3DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user3DialogVisible = false">确认</el-button>
+                  <el-button @click="user3DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user3DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -620,7 +630,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="高产用户(原帖)榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -635,8 +645,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user4DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user4DialogVisible = false">确认</el-button>
+                  <el-button @click="user4DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user4DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -670,7 +680,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="台独/统一·议题活跃榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -685,8 +695,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user5DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user5DialogVisible = false">确认</el-button>
+                  <el-button @click="user5DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user5DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -716,7 +726,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="中国/中共·议题活跃榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -731,8 +741,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user6DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user6DialogVisible = false">确认</el-button>
+                  <el-button @click="user6DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user6DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -762,7 +772,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="民进党·议题活跃榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -777,8 +787,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user7DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user7DialogVisible = false">确认</el-button>
+                  <el-button @click="user7DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user7DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -808,7 +818,7 @@
                 <!-- 只显示选中的事件 -->
                 <el-form :model="form">
                   <el-form-item label="标题">
-                    <el-input value="赖清德·议题活跃榜"></el-input>
+                    <el-input :value=dialogTitle></el-input>
                   </el-form-item>
                 </el-form>
                 <el-form :model="form">
@@ -823,8 +833,8 @@
                   </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                  <el-button @click="user8DialogVisible = false">取消</el-button>
-                  <el-button type="primary" @click="user8DialogVisible = false">确认</el-button>
+                  <el-button @click="user8DialogVisible = false">Cancel</el-button>
+                  <el-button type="primary" @click="user8DialogVisible = false">Confirm</el-button>
                 </span>
               </el-dialog>
             </div>
@@ -848,6 +858,7 @@
   export default {
     data() {
       return {
+        dialogTitle: '',
         generalDialogVisible: false,
         todayDialogVisible: false,
         recentContentDialogVisible: false,
@@ -912,6 +923,8 @@
         eventRanking: [],
         userImgSrc: [],
         eventImgSrc: [],
+        dates: ['近1天','近7天','近30天'],
+        recentDate_selected: '',
         nodes: [],
         links: [],
         showEventInfo: true,
@@ -933,17 +946,14 @@
     computed: {
     filteredUserRanking() {
       if (!this.startDate && !this.endDate) {
-        // 如果没有选择日期，返回原始数据
         return this.userRanking;
       }
 
       return this.userRanking.filter(user => {
         const userDate = new Date(user.date);
-
         const isAfterStartDate = this.startDate ? userDate >= new Date(this.startDate) : true;
         const isBeforeEndDate = this.endDate ? userDate <= new Date(this.endDate) : true;
 
-        // 同时满足开始和结束日期
         return isAfterStartDate && isBeforeEndDate;
       });
     },
@@ -954,35 +964,42 @@
 
       return this.eventRanking.filter(event => {
         const eventDate = new Date(event.date);
-
         const isAfterStartDate = this.startDate ? eventDate >= new Date(this.startDate) : true;
         const isBeforeEndDate = this.endDate ? eventDate <= new Date(this.endDate) : true;
 
-        return isAfterStartDate && isBeforeEndDate
-      })
-    }
+        return isAfterStartDate && isBeforeEndDate;
+      });
+    },
     },
     methods: {
       right,
       handleClose(done) {
-        done();  // Close the dialog directly without 确认ation
+        done();  // Close the dialog directly without confirmation
       },
       initUserChart() {
         axios.get('http://localhost:8080/user-chart-data')
           .then(response => {
             // 使用后端返回的数据
-            this.nodes = response.data.nodes
-            this.links = response.data.links
+            this.nodes = response.data.nodes;
+            this.links = response.data.links;
           })
           .catch(error => {
-            console.error('Error fetching user chart data from backend, using local data instead:', error)
+            console.error('Error fetching user chart data from backend, using local data instead:', error);
             // 使用本地数据
-            this.nodes = graphData.nodes
-            this.links = graphData.links
+            this.nodes = graphData.nodes;
+            this.links = graphData.links;
           })
           .finally(() => {
+            const allowedCategories = [1, 2, 4, 7]; // 允许的节点类别
+            const filteredNodes = this.nodes.filter(node => allowedCategories.includes(node.category));
+
+            // 过滤出与筛选后的节点相关的所有连接
+            const filteredLinks = this.links.filter(link =>
+              filteredNodes.some(node => node.id === link.source || node.id === link.target)
+            );
+
             // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('userChart'))
+            this.chartInstance = echarts.init(document.getElementById('userChart'));
             const option = {
               title: {
                 top: 'bottom',
@@ -997,13 +1014,13 @@
                   type: 'graph',
                   legendHoverLink: false,
                   layout: 'none',
-                  data: this.nodes.map(node => ({
+                  data: filteredNodes.map(node => ({
                     ...node,
                     x: node.x * 5, // 拉开节点间的距离
                     y: node.y * 5, // 拉开节点间的距离
                     symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
                   })),
-                  links: this.links,
+                  links: filteredLinks, // 使用筛选后的链接
                   categories: graphData.categories,
                   roam: true,
                   label: {
@@ -1023,26 +1040,35 @@
                   }
                 }
               ]
-            }
-            this.chartInstance.setOption(option)
-          })
+            };
+            this.chartInstance.setOption(option);
+          });
       },
+
       initEventChart() {
         axios.get('http://localhost:8080/event-chart-data')
           .then(response => {
             // 使用后端返回的数据
-            this.nodes = response.data.nodes
-            this.links = response.data.links
+            this.nodes = response.data.nodes;
+            this.links = response.data.links;
           })
           .catch(error => {
-            console.error('Error fetching event chart data from backend, using local data instead:', error)
+            console.error('Error fetching event chart data from backend, using local data instead:', error);
             // 使用本地数据
-            this.nodes = graphData.nodes
-            this.links = graphData.links
+            this.nodes = graphData.nodes;
+            this.links = graphData.links;
           })
           .finally(() => {
+            const allowedCategories = [1, 2, 6, 7, 8]; // 允许的节点类别
+            const filteredNodes = this.nodes.filter(node => allowedCategories.includes(node.category));
+
+            // 过滤出与筛选后的节点相关的连接
+            const filteredLinks = this.links.filter(link =>
+              filteredNodes.some(node => node.id === link.source || node.id === link.target)
+            );
+
             // 初始化图表
-            this.chartInstance = echarts.init(document.getElementById('eventChart'))
+            this.chartInstance = echarts.init(document.getElementById('eventChart'));
             const option = {
               title: {
                 top: 'bottom',
@@ -1057,13 +1083,13 @@
                   type: 'graph',
                   legendHoverLink: false,
                   layout: 'none',
-                  data: this.nodes.map(node => ({
+                  data: filteredNodes.map(node => ({
                     ...node,
                     x: node.x * 5, // 拉开节点间的距离
                     y: node.y * 5, // 拉开节点间的距离
                     symbolSize: node.symbolSize * 0.8 // 缩小点的大小为原来的 0.8
                   })),
-                  links: this.links,
+                  links: filteredLinks, // 使用筛选后的连接
                   categories: graphData.categories,
                   roam: true,
                   label: {
@@ -1083,10 +1109,11 @@
                   }
                 }
               ]
-            }
-            this.chartInstance.setOption(option)
-          })
+            };
+            this.chartInstance.setOption(option);
+          });
       },
+
       fetchEventImgSrc() {
         axios.get('http://localhost:8080/event-img-src')
           .then(response => {
@@ -1141,6 +1168,46 @@
             this.eventRanking = localEventRanking
           })
       },
+      fetchRecentDate() {
+        // 获取当前时间
+        const currentDate = new Date();
+
+        let startDate;
+
+        // 根据选择的日期范围计算 startDate
+        switch (this.recentDate_selected) {
+          case '近1天':
+            startDate = new Date(currentDate.setDate(currentDate.getDate() - 1));
+            break;
+          case '近7天':
+            startDate = new Date(currentDate.setDate(currentDate.getDate() - 7));
+            break;
+          case '近30天':
+            startDate = new Date(currentDate.setDate(currentDate.getDate() - 30));
+            break;
+          default:
+            startDate = null; // 若无选择，则不进行过滤
+        }
+
+        // 格式化 startDate 和 endDate 为 YYYY-MM-DD
+        if (startDate) {
+          this.startDate = startDate.toISOString().split('T')[0];
+        }
+        this.endDate = new Date().toISOString().split('T')[0]; // 当前时间为 endDate
+
+        // 调用过滤方法来更新数据
+        this.filteredUserRanking();
+        this.filteredEventRanking();
+      },
+      resetData() {
+        this.recentDate_selected = null;
+        this.startDate = null;
+        this.endDate = null;
+
+        // 调用过滤方法以重置数据为初始状态
+        this.filteredUserRanking();
+        this.filteredEventRanking();
+      },
       toggleChart() {
         this.$nextTick(() => {
           if (this.showEventInfo) this.initEventChart()
@@ -1150,87 +1217,163 @@
         })
       },
 
-      navigateToEvent(event) {
-         this.selectedEvent = event.event;
-         this.dialogVisible = true;
-         this.selectedDate = event.date;
-      },
       openGeneralRankingDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date, dialogTitle: '总内容数量榜'}
+        });
+        this.dialogTitle = '总内容数量榜';
         this.generalSelectedEvent = event.event;
-        this.generalSelectedDate = event.date; // Adjust as needed
+        this.generalSelectedDate = event.date;
         this.generalDialogVisible = true;
       },
       openTodayRankingDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date, dialogTitle: '今日内容数量榜'}
+        });
+        this.dialogTitle = '今日内容数量榜'; // Set the dialog title for this ranking
         this.todaySelectedEvent = event.event;
-        this.todaySelectedDate = event.date; // Adjust as needed
+        this.todaySelectedDate = event.date;
         this.todayDialogVisible = true;
       },
       openRecentContentDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date, dialogTitle: '近期内容数量飙升榜' }
+        });
+        this.dialogTitle = '近期内容数量飙升榜'; // Set the dialog title for this ranking
         this.recentContentSelectedEvent = event.event;
         this.recentContentSelectedDate = event.date;
         this.recentContentDialogVisible = true;
       },
       openHostileDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date,dialogTitle: '敌意言论数量榜' }
+        });
+        this.dialogTitle = '敌意言论数量榜'; // Set the dialog title for this ranking
         this.hostileSelectedEvent = event.event;
         this.hostileSelectedDate = event.date;
         this.hostileDialogVisible = true;
       },
+
       openTotalParticipantDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date,dialogTitle: '总参与人数榜' }
+        });
+        this.dialogTitle = '总参与人数榜'; // Set the dialog title for this ranking
         this.totalParticipantsSelectedEvent = event.event;
-        this.totalParticipantsDialogVisible = true;
         this.totalParticipantsSelectedDate = event.date;
+        this.totalParticipantsDialogVisible = true;
       },
       openTodayParticipantDialog(event) {
-        this.todayParticipantsDialogVisible = true;
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date,dialogTitle: '今日参与人数榜' }
+        });
+        this.dialogTitle = '今日参与人数榜'; // Set the dialog title for this ranking
         this.todayParticipantsSelectedEvent = event.event;
         this.todayParticipantsSelectedDate = event.date;
+        this.todayParticipantsDialogVisible = true;
       },
       openRecentUserDialog(event) {
-        this.recentUserDialogVisible = true;
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date,dialogTitle: '近期参与人数飙升榜' }
+        });
+        this.dialogTitle = '近期参与人数飙升榜'; // Set the dialog title for this ranking
         this.recentUserSelectedEvent = event.event;
         this.recentUserSelectedDate = event.date;
+        this.recentUserDialogVisible = true;
       },
-      openHostileRaioDialog(event) {
-        this.hostileRatioDialogVisible = true;
+      openHostileRatioDialog(event) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { event: event.event, date: event.date,dialogTitle: '敌意言论比例榜' }
+        });
+        this.dialogTitle = '敌意言论比例榜'; // Set the dialog title for this ranking
         this.hostileRatioSelectedEvent = event.event;
         this.hostileRatioSelectedDate = event.date;
+        this.hostileRatioDialogVisible = true;
       },
       openUser1Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '大V用户(出度)榜' }
+        });
+        this.dialogTitle = '大V用户(出度)榜'
         this.user1DialogVisible = true;
         this.user1Ranking = user.user;
         this.user1RankingDate = user.date;
       },
       openUser2Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '大V用户(高阶互动)榜' }
+        });
+        this.dialogTitle = '大V用户(高阶互动)榜'
         this.user2DialogVisible = true;
         this.user2Ranking = user.user;
         this.user2RankingDate = user.date;
       },
       openUser3Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '大V用户(出度)榜' }
+        });
+        this.dialogTitle = '大V用户(出度)榜'
         this.user3DialogVisible = true;
         this.user3Ranking = user.user;
         this.user3RankingDate = user.date;
       },
       openUser4Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '高产用户(原帖)榜' }
+        });
+        this.dialogTitle = '高产用户(原帖)榜'
         this.user4DialogVisible = true;
         this.user4Ranking = user.user;
         this.user4RankingDate = user.date;
       },
       openUser5Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '台独/统一·议题活跃榜' }
+        });
+        this.dialogTitle = '台独/统一·议题活跃榜'
         this.user5DialogVisible = true;
         this.user5Ranking = user.user;
         this.user5RankingDate = user.date;
       },
       openUser6Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '中国/中共·议题活跃榜' }
+        });
+        this.dialogTitle = '中国/中共·议题活跃榜'
         this.user6DialogVisible = true;
         this.user6Ranking = user.user;
         this.user6RankingDate = user.date;
       },
       openUser7Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '民进党·议题活跃榜' }
+        });
+        this.dialogTitle = '民进党·议题活跃榜'
         this.user7DialogVisible = true;
         this.user7Ranking = user.user;
         this.user7RankingDate = user.date;
       },
       openUser8Dialog(user) {
+        this.$router.push({
+          path: '/hiddenPage',
+          query: { user: user.user, date: user.date,dialogTitle: '赖清德·议题活跃榜' }
+        });
+        this.dialogTitle = '赖清德·议题活跃榜'
         this.user8DialogVisible = true;
         this.user8Ranking = user.user;
         this.user8RankingDate = user.date;
@@ -1311,7 +1454,7 @@
   }
 
   .darkContainer {
-    height: 630px;
+    height: 550px;
     width: 350px;
     /* 容器的宽度，可以根据需要调整 */
     background-color: #57bdf8;
@@ -1325,7 +1468,7 @@
   }
 
   .lightContainer {
-    height: 630px;
+    height: 550px;
     width: 350px;
     /* 容器的宽度，可以根据需要调整 */
     background-color: rgb(243, 251, 255);

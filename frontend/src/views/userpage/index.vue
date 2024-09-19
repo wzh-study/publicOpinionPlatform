@@ -1,4 +1,5 @@
 <template>
+    <!-- rgb(0,32,96) -->
     <div class="dashboard">
         <div class="searchbar">
             <div class="icon-group">
@@ -18,9 +19,12 @@
                     <div>Custom</div>
                 </div>
             </div>
-            <div class="date-selectors">
-                <el-date-picker v-model="startDate" type="date" placeholder="开始日期" />
-                <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />
+            <div class="filtered-date">
+                <el-select v-model="recentDate_selected" clearable placeholder="时间线" @change="fetchRecentDate"
+                    @clear="resetData">
+                    <el-option v-for="date in dates" :key="date" :label="date" :value="date">
+                    </el-option>
+                </el-select>
             </div>
         </div>
 
@@ -39,30 +43,59 @@
                         <div class="user-info-container">
                             <el-row style="display: flex; justify-content: space-between;">
                                 <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
-                                    <span style="margin-right: 16px;">用户名: </span>
-                                    <el-select v-model="userinfo_selected" placeholder="请选择" @change="fetchUserData">
+                                    <span style="margin-right: 16px; font-weight: bold; font-family: sans-serif;">用户名:
+                                    </span>
+                                    <el-select v-model="userinfo_selected" placeholder="请选择"
+                                        @change="fetchUserData(userinfo_selected)">
                                         <el-option v-for="username in usernames" :key="username" :label="username"
                                             :value="username" />
                                     </el-select>
                                 </el-col>
 
                                 <el-col :span="11" style="display: flex; align-items: center; justify-content: center;">
-                                    <span style="margin-right: 16px;">用户头像: </span>
-                                    <img :src="userProfile.imageUrl"
+                                    <span style="margin-right: 16px; font-weight: bold; font-family: sans-serif;">用户头像:
+                                    </span>
+                                    <img :src="selectedUserProfileNow.imageUrl"
                                         style="border-radius: 50%; width: 120px; height: 120px;">
                                 </el-col>
                             </el-row>
 
                             <!-- User Data Table -->
-                            <el-table class="custom-el-table" :data="tableRows" style="margin-top: 100px;">
+                            <!-- <el-table class="custom-el-table" :data="tableRows"
+                                style="margin-top: 100px; width: 100%; font-size: 10px; font-weight: bold; font-family: sans-serif;">
                                 <el-table-column v-for="(item, index) in tableData" :key="index" :prop="'col' + index"
-                                    :label="item.key" :cell-style="{ background: 'yellow' }" />
-                            </el-table>
+                                    :label="item.key" :header-cell-style="{ fontSize: '10px', fontWeight: 'bold', fontFamily: 'sans-serif', Color: 'black' }"/>
+                            </el-table> -->
 
-                            <div class="content-conclusion">
+                            <table class="custom-table"
+                                style="margin-top: 100px; width: 100%;  font-family: sans-serif; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th v-for="(item, index) in tableData" :key="index"
+                                            style="font-size: 14px; font-weight: bold; color: #333; background-color: #f2f2f2; border-radius: 4px; padding: 4px; border: 2px solid #ddd; ">
+                                            {{ item.key }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(row, rowIndex) in tableRows" :key="rowIndex"
+                                        style="background-color: #fff;">
+                                        <td v-for="(item, index) in tableData" :key="index"
+                                            style="border: 2px solid #ddd; padding: 4px; text-align: center; border-radius: 4px; background-color: #fafafa;">
+                                            {{ row['col' + index] }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+                            <!-- <div class="content-conclusion">
                                 [B] 活跃与影响面
-                            </div>
+                            </div> -->
                         </div>
+
+
                     </el-col>
 
                     <!-- Right Side (40% width) -->
@@ -77,25 +110,30 @@
                             </el-collapse-item>
                             <!-- Followers List -->
                             <el-collapse-item class="custom-collapse-item" title="粉丝列表" name="2">
-                                <el-table :data="followersList" border style="width: 100%">
-                                    <el-table-column prop="name" label="粉丝名称" />
+                                <el-table :data="followersList" border style="width: 100% " :show-header="false">
+                                    <el-table-column prop="name" />
                                 </el-table>
                             </el-collapse-item>
 
                             <!-- Following List -->
                             <el-collapse-item class="custom-collapse-item" title="关注列表" name="3">
-                                <el-table :data="followingList" border style="width: 100%">
-                                    <el-table-column prop="name" label="关注名称" />
+                                <el-table :data="followingList" border style="width: 100%" :show-header="false">
+                                    <el-table-column prop="name" />
                                 </el-table>
                             </el-collapse-item>
                         </el-collapse>
-                        <!-- Table Title -->
-                        <div class="content-conclusion">
-                            [A] 基础信息
-                        </div>
                     </el-col>
 
                 </el-row>
+                <div style="display: flex; justify-content: center;">
+                    <div class="content-conclusion" style="flex: 1; text-align: center;">
+                        [B] 活跃与影响面
+                    </div>
+
+                    <div class="content-conclusion" style="flex: 1; text-align: center;">
+                        [A] 基础信息
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -109,21 +147,38 @@
             <div class="UserBehaviourRegular-container" v-show="showBehaviourRegular"
                 style="display: flex; justify-content: space-around; align-items: center;">
                 <div style="width: 800px; text-align: center;">
-                    <div ref="UserBehaviourRegularChart" style="width: 100%; height: 400px;" />
-                    <div class="content-conclusion">[C] 活跃时间</div>
+                    <div ref="UserBehaviourRegularChart" style="width: 100%; height: 350px;" />
+                    <!-- <div class="content-conclusion">[C] 活跃时间</div> -->
                 </div>
-                <div style="width: 400px; text-align: center;">
-                    <div v-if="UserBehaviourRegularActiveTimePointsData.length > 0">
+
+
+                <div
+                    style="width: 400px; text-align: center; border: 1px dashed rgb(2, 157, 255); padding: 10px; border-radius: 10px;">
+                    <div v-if="UserBehaviourRegularActiveTimePointsData.length > 0" class="time-tag-wrapper">
                         <div v-for="(timePoint, index) in UserBehaviourRegularActiveTimePointsData" :key="index"
-                            class="time-tag">
-                            <el-tag type="danger" effect="plain" style="margin-top: 40px;">
-                                <i class="el-icon-time" style="margin-left: 2px;" />
+                            class="time-tag-container">
+                            <el-tag type="danger" effect="plain"
+                                style="width: 100% height: 40px; font-size: 18px; padding: 6px;">
+                                <i class="el-icon-time" style=" font-size: 18px;" />
                                 {{ timePoint }}
                             </el-tag>
                         </div>
                     </div>
-                    <div v-else>No active time points available</div>
-                    <div class="content-conclusion">[D] 活跃时点</div>
+                    <div v-else style="font-size: 18px; color: #666; margin-top: 40px;">No active time points available
+                    </div>
+                    <!-- <div class="content-conclusion">[D] 活跃时点</div> -->
+                </div>
+
+
+            </div>
+
+            <div style="display: flex; justify-content: center;">
+                <div class="content-conclusion" style="flex: 2; text-align: center;">
+                    [C] 活跃时间
+                </div>
+
+                <div class="content-conclusion" style="flex: 1; text-align: center;">
+                    [D] 活跃时点
                 </div>
             </div>
         </div>
@@ -165,8 +220,9 @@
                         <el-table-column v-for="index in 3" :key="index" :prop="'img' + index" align="center">
                             <template slot-scope="{ row }">
                                 <div style="position: relative; display: inline-block; width: 90px; height: 70px;">
-                                    <img :src="row[index - 1].img" style="width: 60px; height: 60px;">
-                                    <span style="position: absolute; top: 0; left: 0; font-size: 8px; ">
+                                    <img :src="row[index - 1].img"
+                                        style="position: absolute; top: 18px; left: 10px; width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                    <span style="position: absolute; top: 0; left: 0; font-size: 12px; ">
                                         {{ row[index - 1].relation }}
                                     </span>
                                 </div>
@@ -185,8 +241,9 @@
                         <el-table-column v-for="index in 3" :key="index" :prop="'img' + index" align="center">
                             <template slot-scope="{ row }">
                                 <div style="position: relative; display: inline-block; width: 90px; height: 70px;">
-                                    <img :src="row[index - 1].img" style="width: 60px; height: 60px;">
-                                    <span style="position: absolute; top: 0; left: 0; font-size: 8px; ">
+                                    <img :src="row[index - 1].img"
+                                        style="position: absolute; top: 18px; left: 10px; width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                    <span style="position: absolute; top: 0; left: 0; font-size: 12px; ">
                                         {{ row[index - 1].relation }}
                                     </span>
                                 </div>
@@ -204,8 +261,9 @@
                         <el-table-column v-for="index in 3" :key="index" :prop="'img' + index" align="center">
                             <template slot-scope="{ row }">
                                 <div style="position: relative; display: inline-block; width: 90px; height: 70px;">
-                                    <img :src="row[index - 1].img" style="width: 60px; height: 60px;">
-                                    <span style="position: absolute; top: 0; left: 0; font-size: 8px; ">
+                                    <img :src="row[index - 1].img"
+                                        style="position: absolute; top: 18px; left: 10px; width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                    <span style="position: absolute; top: 0; left: 0; font-size: 12px; ">
                                         {{ row[index - 1].relation }}
                                     </span>
                                 </div>
@@ -227,13 +285,15 @@
 
             <div class="UserSemantic-container" v-show="showUserSemantic">
                 <div class="content-conclusion" style="margin-bottom: 10px;">[H] 主要话题短语和观点</div>
-                <div style="width: 100%; display: flex; justify-content: space-around; align-items: top center;">
+                <div style="width: 100%; display: flex; justify-content: center; align-items: flex-start;">
                     <!-- Todo 划分成两部分  各占50%   左半部分是echarts图 axios请求的数据为OpinionViewData  包含观点和原文信息  右半部分是对应的表格(element-ui) 表格左边第一列为字段(观点，对应原文)，第二列为对应观点和原文字符串-->
                     <!-- Left Part: ECharts Visualization -->
-                    <div ref="opinionChart" style="width: 50%; height: 400px;"></div>
+                    <div ref="opinionChart"
+                        style="width: 45%; height: 500px; border: 1px dashed grey; border-radius: 2px; margin-right: 30px;">
+                    </div>
 
                     <!-- Right Part: Element UI Table -->
-                    <div style="width: 50%; margin-top: 20px;">
+                    <div style="width: 45%; margin-top: 20px;">
                         <div style="
                                 background-color: rgb(255, 240, 245);
                                 padding: 10px;
@@ -246,7 +306,7 @@
                         </div>
                         <el-table :data="OpinionTableData" style="width: 90%;" stripe :show-header="false" border>
                             <!-- 第二行：话题 -->
-                            <el-table-column prop="field" width="120">
+                            <el-table-column prop="field" width="120" :cell-style="{ fontSize: '24px' }">
                             </el-table-column>
                             <!-- 第三行：原文(部分) -->
                             <el-table-column prop="value">
@@ -257,16 +317,17 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <div class="content-conclusion" style="margin-bottom: 10px; display: inline-block;">[J] 针对xxx的立场
+                    <div class="content-conclusion" style="margin-bottom: 10px; display: inline-block;">[J] 针对<el-select
+                            v-model="selectedStandPointUser" placeholder="选择用户名"
+                            style="display: inline-block; width: 120px; height: 40px; margin-bottom: 10px"
+                            @change="handleUserChange(selectedStandPointUser)">
+                            <el-option v-for="user in StandpointData" :key="user.username" :label="user.username"
+                                :value="user.username">
+                            </el-option>
+                        </el-select>的立场
                     </div>
 
-                    <el-select v-model="selectedStandPointUser" placeholder="选择用户名"
-                        style="display: inline-block; vertical-align: middle; margin-left: 10px;"
-                        @change="handleUserChange(selectedStandPointUser)">
-                        <el-option v-for="user in StandpointData" :key="user.username" :label="user.username"
-                            :value="user.username">
-                        </el-option>
-                    </el-select>
+
                     <!-- <el-button type="primary" style="display: inline-block; vertical-align: middle; margin-left: 10px;"
                         round @click="switchUserStandPoint">切换</el-button> -->
                 </div>
@@ -283,7 +344,7 @@
                                 /* font-weight: bold; */
                                 border-bottom: 1px solid #ddd;
                              ">
-                            针对{{ selectedStandPointUser }}的【xx】立场对应原文(部分)
+                            针对{{ selectedStandPointUser }}的立场对应原文(部分)
                         </div>
                         <el-table :data="StandpointtableData" style="width: 90%" stripe :show-header="false">
                             <!-- 表头 -->
@@ -323,12 +384,16 @@
                                 /* font-weight: bold; */
                                 border-bottom: 1px solid #ddd;
                              ">
-                            【极端愤怒】情绪对应原文(部分)
+                            极端愤怒情绪对应原文(部分)
                         </div>
 
                         <el-table :data="EmotionData" stripe :show-header="false" style="width: 90%; border color: gray">
                             <el-table-column prop="point" width="80" />
-                            <el-table-column prop="text" />
+                            <el-table-column>
+                                <template slot-scope="scope">
+                                    <div v-html="formatText(scope.row.text)"></div>
+                                </template>
+                            </el-table-column>
                         </el-table>
                     </div>
                 </div>
@@ -403,22 +468,22 @@ export default {
     data() {
         return {
             selected: null,
-            startDate: '',
-            endDate: '',
+            dates: ['近1天', '近7天', '近30天'],
+            recentDate_selected: '',
 
             userinfo_selected: 'cnnphilippines',
             //  用户基本信息数据
-            usernames: ['cnnphilippines', '用户2', '用户3'], // 用户名选项
-            userProfile: {
+            usernames: ['cnnphilippines', 'factibulrk', 'jabbyck'], // 用户名选项
+            userProfile: [{
                 username: 'cnnphilippines',
                 imageUrl: require('@/assets/userinfo_images/1.jpg'),
                 url: 'https://example.com',
-                bio: '这是一个示例用户。',
+                bio: '用人工智能AI和软件造福人类，改变世界。',
                 dob: '1990-01-01',
                 region: '上海',
                 profession: '软件工程师',
-                followers: ['用户A', '用户B'],
-                following: ['用户C', '用户D'],
+                followers: ['factibulrk', 'globyck'],
+                following: ['cnnphi', 'cnnfollowing'],
                 posts: 120,
                 reposts: 45,
                 comments: 230,
@@ -430,6 +495,50 @@ export default {
                 repostedUserCount: 40, // 被转发人数
                 likedUserCount: 200 // 被赞人数
             },
+            {
+                username: 'factibulrk',
+                imageUrl: require('@/assets/userinfo_images/2.jpg'),
+                url: 'https://example.com',
+                bio: '为人民奉献，保障生命财产安全，人人有责',
+                dob: '2000-04-21',
+                region: 'Policeman',
+                profession: '警察',
+                followers: ['factibulrk', 'globyck', 'tensora', 'Tommyck'],
+                following: ['cnnphi', 'cnnfollowing', 'Jackxi'],
+                posts: 421,
+                reposts: 89,
+                comments: 110,
+                reposted: 360,
+                commented: 750,
+                liked: 44,
+                // New fields
+                commentedUserCount: 52, // 被评论人数
+                repostedUserCount: 41, // 被转发人数
+                likedUserCount: 220 // 被赞人数
+            },
+            {
+                username: 'jabbyck',
+                imageUrl: require('@/assets/userinfo_images/3.jpg'),
+                url: 'https://example.com',
+                bio: '救人救己，医人医心',
+                dob: '1992-03-04',
+                region: '伦敦',
+                profession: '医生',
+                followers: ['factibulrk', 'globyck', 'syouke', 'torchyuu', 'tensora'],
+                following: ['cnnphi', 'factibulrk', 'tensora'],
+                posts: 197,
+                reposts: 52,
+                comments: 450,
+                reposted: 121,
+                commented: 77,
+                liked: 332,
+                // New fields
+                commentedUserCount: 25, // 被评论人数
+                repostedUserCount: 91, // 被转发人数
+                likedUserCount: 21 // 被赞人数
+            },
+            ],
+            selectedUserProfileNow: {},
             tableData: [], // 用于存储键值对
             tableRows: [{}], // 用于表格行数据
             basicInfo: [],
@@ -439,18 +548,18 @@ export default {
 
             //  用户行为规律数据
             UserBehaviourRegularData: [
-                ['2024/01', 120], ['2024/02', 132], ['2024/03', 101], ['2024/04', 134], ['2024/05', 90], ['2024/06', 110], ['2024/07', 120], ['2024/08', 83]
+                ['2024/01', 220], ['2024/02', 289], ['2024/03', 250], ['2024/04', 44], ['2024/05', 120], ['2024/06', 234], ['2024/07', 49], ['2024/08', 193]
             ],
 
-            UserBehaviourRegularActiveTimePointsData: ['2024/01/02 10:10:10', '2024/03/02 11:12:17', '2024/05/23 08:03:12', '2024/07/11 18:21:32'], // This will hold the fetched time points
+            UserBehaviourRegularActiveTimePointsData: ['2024/01/02 10:10:10', '2024/03/02 11:12:17', '2024/05/23 08:03:12', '2024/07/11 18:21:32', '2024/07/19 11:11:42'], // This will hold the fetched time points
 
             //  用户人格与价值观数据
             BigFivePersonalData: {
-                'Openness': 0.1,
+                'Openness': 0.9,
                 'Conscientiousness': 0.5,
                 'Extraversion': 0.7,
-                'Agreeableness': 0.2,
-                'Neuroticism': 0.3
+                'Agreeableness': 0.4,
+                'Neuroticism': 0.6
             },
             PersonalValueData: {
                 posvalue: [0.1, 0.2, 0, 0.4, 0, 0.3, 0.9, 0.5, 0, 0],
@@ -474,15 +583,15 @@ export default {
 
             topSocialUsers: {
                 relationType: ['粉丝', '粉丝', '关注', '粉丝', '互粉', '粉丝', '互粉', '关注', '粉丝'],
-                imgUrl: Array(9).fill(require('@/assets/userinfo_images/1.jpg'))
+                imgUrl: [require('@/assets/userinfo_images/1.jpg'), require('@/assets/userinfo_images/2.jpg'), require('@/assets/userinfo_images/3.jpg'), require('@/assets/userinfo_images/4.jpg'), require('@/assets/userinfo_images/5.jpg'), require('@/assets/userinfo_images/6.jpg'), require('@/assets/userinfo_images/7.jpg'), require('@/assets/userinfo_images/8.jpg'), require('@/assets/userinfo_images/9.jpg')]
             },
             topInteractionUsers: {
                 relationType: ['非好友', '粉丝', '非好友', '粉丝', '互粉', '粉丝', '互粉', '关注', '粉丝'],
-                imgUrl: Array(9).fill(require('@/assets/userinfo_images/1.jpg'))
+                imgUrl: [require('@/assets/userinfo_images/7.jpg'), require('@/assets/userinfo_images/8.jpg'), require('@/assets/userinfo_images/5.jpg'), require('@/assets/userinfo_images/3.jpg'), require('@/assets/userinfo_images/9.jpg'), require('@/assets/userinfo_images/6.jpg'), require('@/assets/userinfo_images/4.jpg'), require('@/assets/userinfo_images/2.jpg'), require('@/assets/userinfo_images/1.jpg')]
             },
             topCoInteractionUsers: {
                 relationType: ['非好友', '粉丝', '非好友', '粉丝', '互粉', '粉丝', '互粉', '关注', '粉丝'],
-                imgUrl: Array(9).fill(require('@/assets/userinfo_images/1.jpg'))
+                imgUrl: [require('@/assets/userinfo_images/9.jpg'), require('@/assets/userinfo_images/6.jpg'), require('@/assets/userinfo_images/7.jpg'), require('@/assets/userinfo_images/1.jpg'), require('@/assets/userinfo_images/3.jpg'), require('@/assets/userinfo_images/8.jpg'), require('@/assets/userinfo_images/5.jpg'), require('@/assets/userinfo_images/4.jpg'), require('@/assets/userinfo_images/2.jpg')]
             },
             socialRows: [],
             interactionRows: [],
@@ -495,17 +604,9 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
-                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -513,17 +614,9 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权123',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
-                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -531,28 +624,19 @@ export default {
                     name: '美国人呼吁总统当选应当公平竞争',
                     group: 1,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n`
+                            我们是菲律宾青年。我们停在了西菲律宾海\n`
 
                 },
                 {
                     name: '美国人呼吁总统当选应当公平竞争123',
                     group: 1,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -561,17 +645,8 @@ export default {
                     name: '美国人呼吁总统当选应当公平竞争12345',
                     group: 1,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
-                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -580,11 +655,8 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权11111',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n`
+                            我们是菲律宾青年。我们停在了西菲律宾海\n`
 
                 },
 
@@ -593,9 +665,7 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权789',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n`
+                            当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n`
 
                 },
 
@@ -603,17 +673,8 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权9998',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
-                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -623,17 +684,8 @@ export default {
                     name: '菲律宾人呼吁团结捍卫在西菲律宾海的主权',
                     group: 0,
                     text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
-                            我们是菲律宾青年。我们停在了西菲律宾海\n
-                            ---\n
                             OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
-                            OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                            ---\n
                             当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
 
                 },
@@ -683,8 +735,8 @@ export default {
     async mounted() {
         //  用户基本信息
         if (this.usernames.length > 0) {
-            this.userinfo_selected = this.usernames[0] // 设置默认选择第一个用户名
-            this.fetchUserData() // 可选：在组件加载时立即获取第一个用户的数据
+            // this.userinfo_selected = this.usernames[0] // 设置默认选择第一个用户名
+            this.fetchUserData(this.usernames[0]) // 可选：在组件加载时立即获取第一个用户的数据
         }
         //  用户行为规律
         this.fetchUserBehaviourRegularData() // 初始获取用户行为规律数据
@@ -711,41 +763,62 @@ export default {
         select(icon) {
             this.selected = icon
         },
+        // 格式化换行
+        formatText(text) {
+            return text.replace(/\n/g, '<br>');
+        },
         /*  第一部分 用户基本信息  */
         //  请求用户数据
-        fetchUserData() {
-            const username = this.userinfo_selected
-            axios.post('https://localhost:8080/user', {
-                username: username // 发送选择的用户名到后端
-            })
-                .then(response => {
-                    if (response.data) {
-                        this.userProfile = { ...this.userProfile, ...response.data }
-                        this.fillBasicInfo() // 使用默认值重新填充表格，确保数据的连续性
-                        this.fillTableData()
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching user data:', error)
-                    this.fillBasicInfo() // 使用默认值重新填充表格，确保数据的连续性
-                    this.fillTableData() // 使用默认值重新填充表格，确保数据的连续性
-                })
+        fetchUserData(data) {
+            const username = data
+            const selectedUserProfile = this.userProfile.find(profile => profile.username === username);
+
+
+            if (selectedUserProfile) {
+                this.selectedUserProfileNow = { ...selectedUserProfile };
+                this.fillBasicInfo(); // Use default or existing values to fill the table
+                this.fillTableData();
+                // If user found in the profile array, fill the data
+                //     axios.post('https://localhost:8080/user', {
+                //         username: username // Send the selected username to the backend
+                //     })
+                //         .then(response => {
+                //             if (response.data) {
+                //                 // Merge the response data with the selected user profile
+                //                 this.selectedUserProfileNow = { ...selectedUserProfile, ...response.data };
+                //                 this.fillBasicInfo(selectedUserProfileNow); // Refill the table with the new data
+                //                 this.fillTableData(selectedUserProfileNow);
+                //             }
+                //         })
+                //         .catch(error => {
+                //             console.error('Error fetching user data:', error);
+                //             // Fallback to use the selected user's data even if an error occurs
+                //             this.selectedUserProfileNow = { ...selectedUserProfile };
+                //             console.log(selectedUserProfileNow)
+                //             this.fillBasicInfo(selectedUserProfileNow); // Use default or existing values to fill the table
+                //             this.fillTableData(selectedUserProfileNow);
+                //         });
+                // } else {
+                //     console.error('No user profile found with the given username:', username);
+                //     // Optionally handle the case where no user profile matches
+                // }
+            }
         },
         //  基本信息定义
         fillBasicInfo() {
             this.basicInfo = [
-                { key: '用户名', value: this.userProfile.username },
-                { key: '个人简介', value: this.userProfile.bio },
-                { key: '出生日期', value: this.userProfile.dob },
-                { key: '地区', value: this.userProfile.region },
-                { key: '职业', value: this.userProfile.profession }
+                { key: '用户名', value: this.selectedUserProfileNow.username },
+                { key: '个人简介', value: this.selectedUserProfileNow.bio },
+                { key: '出生日期', value: this.selectedUserProfileNow.dob },
+                { key: '地区', value: this.selectedUserProfileNow.region },
+                { key: '职业', value: this.selectedUserProfileNow.profession }
             ]
 
-            this.followersList = this.userProfile.followers.map(follower => ({
+            this.followersList = this.selectedUserProfileNow.followers.map(follower => ({
                 name: follower
             }))
 
-            this.followingList = this.userProfile.following.map(following => ({
+            this.followingList = this.selectedUserProfileNow.following.map(following => ({
                 name: following
             }))
         },
@@ -754,15 +827,15 @@ export default {
             const row = {} // 初始化 row 对象
             //  请求数据  暂时无  换成假数据
             this.tableData = [
-                { key: '原发帖个数', value: this.userProfile.posts || 10 },
-                { key: '转发帖个数', value: this.userProfile.reposts || 10 },
-                { key: '评论个数', value: this.userProfile.comments || 10 },
-                { key: '被评论个数', value: this.userProfile.commented || 10 },
-                { key: '被评论人数', value: this.userProfile.commentedUserCount || 10 },
-                { key: '被转发个数', value: this.userProfile.reposted || 10 },
-                { key: '被转发人数', value: this.userProfile.repostedUserCount || 10 },
-                { key: '被赞个数', value: this.userProfile.liked || 10 },
-                { key: '被赞人数', value: this.userProfile.likedUserCount || 10 }
+                { key: '原发帖个数', value: this.selectedUserProfileNow.posts || 10 },
+                { key: '转发帖个数', value: this.selectedUserProfileNow.reposts || 10 },
+                { key: '评论个数', value: this.selectedUserProfileNow.comments || 10 },
+                { key: '被评论个数', value: this.selectedUserProfileNow.commented || 10 },
+                { key: '被评论人数', value: this.selectedUserProfileNow.commentedUserCount || 10 },
+                { key: '被转发个数', value: this.selectedUserProfileNow.reposted || 10 },
+                { key: '被转发人数', value: this.selectedUserProfileNow.repostedUserCount || 10 },
+                { key: '被赞个数', value: this.selectedUserProfileNow.liked || 10 },
+                { key: '被赞人数', value: this.selectedUserProfileNow.likedUserCount || 10 }
 
             ]
 
@@ -810,10 +883,15 @@ export default {
         initUserBehaviourTimeChart(data) {
             var myChart = echarts.init(this.$refs.UserBehaviourRegularChart)
             var option = {
-                // title: {
-                //     text: 'UserBehaviourTimeRegular',
-                //     left: '1%'
-                // },
+                title: {
+                    text: '用户不同时间段发布贴文的数量折线图',
+                    left: 'center',  // Centers the title horizontally
+                    top: 'top',      // Positions the title at the top of the chart (default)
+                    textStyle: {
+                        fontSize: 16,  // Adjust the font size if needed
+                        fontWeight: 'bold'  // Optional: make the title bold
+                    }
+                },
                 tooltip: {
                     trigger: 'axis'
                 },
@@ -827,7 +905,7 @@ export default {
                 },
                 yAxis: {},
                 toolbox: {
-                    right: 150, //   右侧工具箱
+                    right: 100, //   右侧工具箱
                     feature: {
                         dataZoom: {
                             yAxisIndex: 'none'
@@ -870,11 +948,11 @@ export default {
                         },
                         {
                             gt: 200,
-                            lte: 300,
+                            lte: 250,
                             color: '#AA069F'
                         },
                         {
-                            gt: 300,
+                            gt: 250,
                             color: '#AC3B2A'
                         }
                     ],
@@ -905,6 +983,9 @@ export default {
                             },
                             {
                                 yAxis: 200
+                            },
+                            {
+                                yAxis: 250
                             },
                             {
                                 yAxis: 300
@@ -953,7 +1034,34 @@ export default {
                 data.Neuroticism
             ]
 
+            const OtherPersonalValues = [
+                 0.4,
+                 0.8,
+                0.1,
+                0.7,
+                 0.2
+            ]
+
+
             const radarOption = {
+                tooltip: {
+                    trigger: 'item',  // 设置为触发项
+                    formatter: function (params) {
+                        const labels = ['开放性', '责任心', '外向性', '宜人性', '神经质'];
+                        const value = params.value;
+                        let result = '';
+                        for (let i = 0; i < value.length; i++) {
+                            result += `${labels[i]}: ${value[i]}<br>`;
+                        }
+                        return result;
+                    }
+                },
+                legend: {
+                        show: true,
+                        left: 'center',
+                        top: 'top'
+                        
+                },
                 radar: {
                     indicator: [
                         { name: '开放性', max: 1 },
@@ -968,9 +1076,14 @@ export default {
                     data: [
                         {
                             value: BigFivePersonalValues,
-                            name: '个人特质'
-                        }
-                    ]
+                            name: '大五人格'
+                        },
+                        {
+                            value: OtherPersonalValues,
+                            name: '其他价值观'
+                        },
+                    ],
+                    
                 }]
             }
 
@@ -1025,9 +1138,9 @@ export default {
                             show: true,
                             position: 'insideBottom',  // 改为 'insideTop'，显示在柱子的顶部
                             formatter: function (params) {
-                            // 值为0时不显示标签
-                            return params.value === 0 ? '' : params.value;
-                    }
+                                // 值为0时不显示标签
+                                return params.value === 0 ? '' : params.value;
+                            }
                         },
                         data: negvalue
                     }
@@ -1331,6 +1444,7 @@ export default {
             const option = {
                 title: {
                     text: '话题观点分析',
+                    left: 'center'
                 },
                 tooltip: {
                     trigger: 'item',
@@ -1351,13 +1465,20 @@ export default {
                     })),
                     //links: this.generateLinks(data),  // 自动生成links，表示节点之间的关系
                     force: {
-                        repulsion: 150,  // 设置节点之间的排斥力
+                        repulsion: 180,  // 设置节点之间的排斥力
                     },
                     roam: true,
+                    // label: {
+                    //     show: true,
+                    //     position: 'right',
+                    //     formatter: '{b}',
+                    // },
                     label: {
                         show: true,
                         position: 'right',
-                        formatter: '{b}',
+                        formatter: function (params) {
+                            return params.name.slice(0, 4) + '...'; // 只显示前三个字符
+                        },
                     },
                 }],
             };
@@ -1499,24 +1620,10 @@ export default {
                         {
                             point: '极端愤怒',
                             text: `当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                                        ---\n
                                         当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来\n
-                                        ---\n
                                         我们是菲律宾青年。我们停在了西菲律宾海\n
-                                        ---\n
-                                        我们是菲律宾青年。我们停在了西菲律宾海\n
-                                        ---\n
                                         OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                                        ---\n
-                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海 (WPS) 的领土权利。\n
-                                        ---\n
-                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海
-                                        ---\n
-                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海(WPS) 的领土权利。\n
-                                        ---\n
-                                        OCTA Research 的一项调查显示，七成菲律宾人认为，总统小费迪南德·马科斯的政府应该通过军事行动和外交手段维护该国在西菲律宾海(WPS) 的领土权利。\n
-                                        ---\n
-                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来-- - 我们是菲律宾青年。我们停在了西菲律宾海`
+                                        当我们在西菲律宾海（WPS）专属经济区的自己的水域和土地上受到欺凌和占领时，全体菲律宾人民必须为了祖国团结起来---我们是菲律宾青年。我们停在了西菲律宾海`
                         }
                     ]
                     this.initEmotionalChart(this.EmotionData);
@@ -1735,7 +1842,7 @@ hr {
 }
 
 .custom-collapse-item {
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 /* 表格样式 */
@@ -1750,14 +1857,36 @@ hr {
 .content-conclusion {
     text-align: center;
     font-family: "Microsoft YaHei", serif;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     font-weight: bold;
     color: deepskyblue;
     margin-top: 20px;
 }
 
 
+/* 活跃时点样式 */
+.time-tag-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    /* Distributes items with equal space above and below */
+    align-items: center;
+    /* Centers the items horizontally */
+    height: 100%;
+    /* Make sure the parent container has a defined height */
+    padding: 10px;
+    /* Optional: padding to provide space inside the parent container */
+    gap: 22px;
+    /* Add some space between items */
+}
 
+.time-tag-container {
+    width: 100%;
+    /* Ensure the tags take up the necessary space */
+    display: flex;
+    justify-content: center;
+    /* Center the tags inside each container */
+}
 
 /* 用户参与舆情样式 */
 .custom-timeline {
