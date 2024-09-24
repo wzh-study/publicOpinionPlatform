@@ -2,32 +2,74 @@
     <div class="dashboard">
         <div class="searchbar">
         <div class="icon-group">
-          <div class="icon-item" @click="select('facebook')">
+          <div class="icon-item" @click="select('Facebook')"
+               :class="{ 'selected-item': selected === 'Facebook' }">
             <el-button
               :type="selected === 'facebook' ? 'primary' : 'default'"
-              icon="el-icon-user-solid"
-              circle
-              :style="{ fontSize: '25px', transform: 'scale(1.1)'}"
-            />
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Facebook' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/facebook.png"
+                alt="icon"
+                style="width: 50px; height: 50px;"
+              />
+            </el-button>
             <div>Facebook</div>
           </div>
-          <div class="icon-item" @click="select('twitter')">
+          <div class="icon-item" @click="select('Twitter')"
+               :class="{ 'selected-item': selected === 'Twitter' }">
             <el-button
               :type="selected === 'twitter' ? 'primary' : 'default'"
-              icon="el-icon-platform-eleme"
-              circle
-              :style="{ fontSize: '25px', transform: 'scale(1.1)'}"
-            />
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Twitter' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/twitter.png"
+                alt="icon"
+                style="width: 50px; height: 50px;"
+              />
+            </el-button>
             <div>Twitter</div>
           </div>
-          <div class="icon-item" @click="select('custom')">
+          <div class="icon-item" @click="select('Youtube')"
+               :class="{ 'selected-item': selected === 'Youtube' }">
             <el-button
-              :type="selected === 'custom' ? 'primary' : 'default'"
-              icon="el-icon-platform-eleme"
-              circle
-              :style="{ fontSize: '25px', transform: 'scale(1.1)'}"
-            />
-            <div>Custom</div>
+              :type="selected === 'Youtube' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Youtube' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/youtube.png"
+                alt="icon"
+                style="width: 70px; height: 50px;"
+              />
+            </el-button>
+            <div>Youtube</div>
+          </div>
+          <div class="icon-item"
+               @click="select('weibo')"
+               :class="{ 'selected-item': selected === 'weibo' }">
+            <el-button
+              :type="selected === 'weibo' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'weibo' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/weibo.png"
+                alt="icon"
+                style="width: 70px; height: 50px;"
+              />
+            </el-button>
+            <div>Weibo</div>
           </div>
         </div>
 <!--        <div class="date-selectors">-->
@@ -35,7 +77,7 @@
 <!--          <el-date-picker v-model="endDate" type="date" placeholder="结束日期" />-->
 <!--        </div>-->
           <div class="filtered-date">
-            <el-select v-model="recentDate_selected" clearable placeholder="时间线" @change="fetchRecentDate" @clear="resetData">
+            <el-select v-model="recentDate_selected" clearable placeholder="时间线" @change="fetchRecentDate" @clear="resetData" :style="{ width: '500px' }">
               <el-option
                 v-for="date in dates"
                 :key="date"
@@ -917,6 +959,7 @@
         form:{},
         dialogVisible: false,
         selectedEvent: '',
+        selected: null,
         selectedDate: '',
         chartInstance: null,
         userRanking: [],
@@ -944,35 +987,56 @@
       this.fetchEventImgSrc()
     },
     computed: {
-    filteredUserRanking() {
-      if (!this.startDate && !this.endDate) {
-        return this.userRanking;
-      }
+      filteredUserRanking() {
+          // 如果没有选择日期范围，则返回前 10 条所有数据
+          if (!this.startDate && !this.endDate) {
+              return this.userRanking.slice(0, 10);
+          }
 
-      return this.userRanking.filter(user => {
-        const userDate = new Date(user.date);
-        const isAfterStartDate = this.startDate ? userDate >= new Date(this.startDate) : true;
-        const isBeforeEndDate = this.endDate ? userDate <= new Date(this.endDate) : true;
+          // 对每个用户的数据进行筛选
+          const rankedUsers = this.userRanking.filter(user => {
+              const userDate = new Date(user.date);
+              const isAfterStartDate = this.startDate ? userDate >= new Date(this.startDate) : true;
+              const isBeforeEndDate = this.endDate ? userDate <= new Date(this.endDate) : true;
 
-        return isAfterStartDate && isBeforeEndDate;
-      });
-    },
-    filteredEventRanking() {
-      if (!this.startDate && !this.endDate) {
-        return this.eventRanking;
-      }
+              // 返回符合筛选条件的用户数据
+              return isAfterStartDate && isBeforeEndDate;
+          });
 
-      return this.eventRanking.filter(event => {
-        const eventDate = new Date(event.date);
-        const isAfterStartDate = this.startDate ? eventDate >= new Date(this.startDate) : true;
-        const isBeforeEndDate = this.endDate ? eventDate <= new Date(this.endDate) : true;
+          // 只返回前 10 条符合条件的数据
+          return rankedUsers.slice(0, 10);
+      },
 
-        return isAfterStartDate && isBeforeEndDate;
-      });
-    },
+      filteredEventRanking() {
+          // 如果没有选择日期范围，则返回前 10 条所有数据
+          if (!this.startDate && !this.endDate) {
+              return this.eventRanking.slice(0, 10);
+          }
+
+          // 对每个事件的数据进行筛选
+          const rankedEvents = this.eventRanking.filter(event => {
+              const eventDate = new Date(event.date);
+              const isAfterStartDate = this.startDate ? eventDate >= new Date(this.startDate) : true;
+              const isBeforeEndDate = this.endDate ? eventDate <= new Date(this.endDate) : true;
+
+              // 返回符合筛选条件的事件数据
+              return isAfterStartDate && isBeforeEndDate;
+          });
+
+          // 只返回前 10 条符合条件的数据
+          return rankedEvents.slice(0, 10);
+      },
     },
     methods: {
       right,
+      select(platform) {
+        // 如果再次点击已经选中的平台，取消选择
+        if (this.selected === platform) {
+          this.selected = null;  // 恢复到未选中的状态
+        } else {
+          this.selected = platform;  // 更新选中的平台
+        }
+      },
       handleClose(done) {
         done();  // Close the dialog directly without confirmation
       },
@@ -1114,28 +1178,49 @@
           });
       },
 
-      fetchEventImgSrc() {
-        axios.get('http://localhost:8080/event-img-src')
-          .then(response => {
-            this.eventImgSrc = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching event image sources from backend:', error)
-            console.log('Event Ranking Length:', this.eventRanking.length)
-            console.log('User Ranking Length:', this.userRanking.length)
-            this.eventImgSrc = Array(this.eventRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
-          })
-      },
       fetchUserImgSrc() {
-        axios.get('http://localhost:8080/user-img-src')
-          .then(response => {
-            this.userImgSrc = response.data
-          })
-          .catch(error => {
-            console.error('Error fetching user image sources from backend:', error)
-            this.userImgSrc = Array(this.userRanking.length).fill(require('@/assets/userinfo_images/1.jpg')) // 使用默认图片作为备用
-          })
+          axios.get('http://localhost:8080/user-img-src')
+              .then(response => {
+                  this.userImgSrc = response.data;
+              })
+              .catch(error => {
+                  console.error('Error fetching user image sources from backend:', error);
+                  this.userImgSrc = this.selectRandomImages(this.userRanking, 10);
+              });
       },
+
+      selectRandomImages(rankingList, count) {
+          const imgPaths = [
+              require('@/assets/userinfo_images/1.jpg'),
+              require('@/assets/userinfo_images/2.jpg'),
+              require('@/assets/userinfo_images/3.jpg'),
+              require('@/assets/userinfo_images/4.jpg'),
+              require('@/assets/userinfo_images/5.jpg'),
+              require('@/assets/userinfo_images/6.jpg'),
+              require('@/assets/userinfo_images/7.jpg'),
+              require('@/assets/userinfo_images/8.jpg'),
+              require('@/assets/userinfo_images/9.jpg'),
+              require('@/assets/userinfo_images/10.jpg'),
+              require('@/assets/userinfo_images/11.jpg')
+          ];
+
+          return Array.from({ length: Math.min(count, rankingList.length) }, () => {
+              const randomIndex = Math.floor(Math.random() * imgPaths.length);
+              return imgPaths[randomIndex];
+          });
+      },
+
+      fetchEventImgSrc() {
+          axios.get('http://localhost:8080/event-img-src')
+              .then(response => {
+                  this.eventImgSrc = response.data;
+              })
+              .catch(error => {
+                  console.error('Error fetching event image sources from backend:', error);
+                  this.eventImgSrc = this.selectRandomImages(this.eventRanking, 10);
+              });
+      },
+
       fetchUserRanking() {
         return axios.get('http://localhost:8080')
           .then(response => {
@@ -1170,8 +1255,7 @@
       },
       fetchRecentDate() {
         // 获取当前时间
-        const currentDate = new Date();
-
+        const currentDate = new Date('2024-09-21');
         let startDate;
 
         // 根据选择的日期范围计算 startDate
@@ -1196,8 +1280,8 @@
         this.endDate = new Date().toISOString().split('T')[0]; // 当前时间为 endDate
 
         // 调用过滤方法来更新数据
-        this.filteredUserRanking();
-        this.filteredEventRanking();
+        this.userImgSrc = this.selectRandomImages(this.userRanking, 10);
+        this.eventImgSrc = this.selectRandomImages(this.eventRanking, 10);
       },
       resetData() {
         this.recentDate_selected = null;
@@ -1207,6 +1291,9 @@
         // 调用过滤方法以重置数据为初始状态
         this.filteredUserRanking();
         this.filteredEventRanking();
+
+        this.fetchUserImgSrc();
+        this.fetchEventImgSrc();
       },
       toggleChart() {
         this.$nextTick(() => {
@@ -1403,9 +1490,9 @@
   }
 
   .icon-group {
+    width:400px;
     display: flex;
     gap: 50px;
-    width:50%;
     /* margin-left: 220px;
     margin-right:50px; */
     justify-content: space-between; /* 确保图标均匀分布 */
@@ -1429,15 +1516,9 @@
     margin-bottom: 10px;
   }
 
-
-  .date-selectors {
-    display: flex;
-    gap: 50px;
-    /* Add some space between date pickers */
-    justify-content: center;
-    /* Center the date pickers */
+  .icon-item:active {
+    transform: scale(0.95); /* 点击时稍微缩小 */
   }
-
   .title-with-button {
     display: flex;
     align-items: center;
@@ -1531,6 +1612,7 @@
     height: 32px;
     /* 设置与字体大小相同的高度 */
     width: 32px;
+    border-radius:100%;
     /* 根据图片比例自动调整宽度 */
     /* 图片和文字之间的间距 */
     /* 图片的上下间距为 1px */
@@ -1576,6 +1658,7 @@
     color: rgb(0,32,96);
     /* 标题颜色 */
     transform: skew(0, -10deg);
+    line-height: 25px;
     /* 使文本校正回正 */
   }
 
@@ -1596,4 +1679,10 @@
       color: blue;
       text-decoration: underline;
   }
+
+  /deep/ .el-button {
+  font-size: 25px;
+  transform: scale(1.1);
+  padding: 5px 10px;
+}
   </style>

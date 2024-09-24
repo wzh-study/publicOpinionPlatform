@@ -2,26 +2,80 @@
     <!-- rgb(0,32,96) -->
     <div class="dashboard">
         <div class="searchbar">
-            <div class="icon-group">
-                <div class="icon-item" @click="select('facebook')">
-                    <el-button :type="selected === 'facebook' ? 'primary' : 'default'" icon="el-icon-user-solid" circle
-                        :style="{ fontSize: '25px' }" />
-                    <div>Facebook</div>
-                </div>
-                <div class="icon-item" @click="select('twitter')">
-                    <el-button :type="selected === 'twitter' ? 'primary' : 'default'" icon="el-icon-platform-eleme" circle
-                        :style="{ fontSize: '25px' }" />
-                    <div>Twitter</div>
-                </div>
-                <div class="icon-item" @click="select('custom')">
-                    <el-button :type="selected === 'custom' ? 'primary' : 'default'" icon="el-icon-platform-eleme" circle
-                        :style="{ fontSize: '25px' }" />
-                    <div>Custom</div>
-                </div>
-            </div>
-            <div class="filtered-date">
+        <div class="icon-group">
+          <div class="icon-item" @click="select('Facebook')"
+               :class="{ 'selected-item': selected === 'Facebook' }">
+            <el-button
+              :type="selected === 'facebook' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Facebook' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/facebook.png"
+                alt="icon"
+                style="width: 50px; height: 50px;"
+              />
+            </el-button>
+            <div>Facebook</div>
+          </div>
+          <div class="icon-item" @click="select('Twitter')"
+               :class="{ 'selected-item': selected === 'Twitter' }">
+            <el-button
+              :type="selected === 'twitter' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Twitter' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/twitter.png"
+                alt="icon"
+                style="width: 50px; height: 50px;"
+              />
+            </el-button>
+            <div>Twitter</div>
+          </div>
+          <div class="icon-item" @click="select('Youtube')"
+               :class="{ 'selected-item': selected === 'Youtube' }">
+            <el-button
+              :type="selected === 'Youtube' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'Youtube' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/youtube.png"
+                alt="icon"
+                style="width: 70px; height: 50px;"
+              />
+            </el-button>
+            <div>Youtube</div>
+          </div>
+          <div class="icon-item"
+               @click="select('weibo')"
+               :class="{ 'selected-item': selected === 'weibo' }">
+            <el-button
+              :type="selected === 'weibo' ? 'primary' : 'default'"
+              plain
+              :style="{ fontSize: '25px', padding: '1',
+              backgroundColor: selected === 'weibo' ? 'lightgray' : 'transparent', /* 自定义背景色 */
+              borderColor: 'transparent'}"
+            >
+              <img
+                src="@/assets/dashboard/weibo.png"
+                alt="icon"
+                style="width: 70px; height: 50px;"
+              />
+            </el-button>
+            <div>Weibo</div>
+          </div>
+        </div>
+            <div class="filtered-date" >
                 <el-select v-model="recentDate_selected" clearable placeholder="时间线" @change="fetchRecentDate"
-                    @clear="resetData">
+                    @clear="resetData" :style="{ width: '500px' }">
                     <el-option v-for="date in dates" :key="date" :label="date" :value="date">
                     </el-option>
                 </el-select>
@@ -760,9 +814,14 @@ export default {
 
     methods: {
         /* 导航栏 */
-        select(icon) {
-            this.selected = icon
-        },
+        select(platform) {
+        // 如果再次点击已经选中的平台，取消选择
+        if (this.selected === platform) {
+          this.selected = null;  // 恢复到未选中的状态
+        } else {
+          this.selected = platform;  // 更新选中的平台
+        }
+      },
         // 格式化换行
         formatText(text) {
             return text.replace(/\n/g, '<br>');
